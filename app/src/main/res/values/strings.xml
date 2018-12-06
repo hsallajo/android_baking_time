@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BakingTime</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="msg_no_network">No network</string>
+</resources>
