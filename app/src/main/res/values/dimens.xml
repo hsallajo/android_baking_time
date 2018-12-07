@@ -6,4 +6,6 @@
     <dimen name="margin_large">24dp</dimen>
 
     <integer name="columns">1</integer>
+    <dimen name="app_bar_height">200dp</dimen>
+    <dimen name="item_width">240dp</dimen>
 </resources>

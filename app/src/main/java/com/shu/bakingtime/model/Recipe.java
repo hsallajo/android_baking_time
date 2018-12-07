@@ -2,13 +2,14 @@ package com.shu.bakingtime.model;
 
 import java.util.List;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Recipe implements Parcelable {
+import org.parceler.Parcel;
+import org.parceler.ParcelProperty;
+
+@Parcel
+public class Recipe {
 
     @SerializedName("id")
     @Expose
@@ -28,93 +29,65 @@ public class Recipe implements Parcelable {
     @SerializedName("image")
     @Expose
     private String image;
-    public final static Parcelable.Creator<Recipe> CREATOR = new Creator<Recipe>() {
 
-
-        @SuppressWarnings({
-                "unchecked"
-        })
-        public Recipe createFromParcel(Parcel in) {
-            return new Recipe(in);
-        }
-
-        public Recipe[] newArray(int size) {
-            return (new Recipe[size]);
-        }
-
-    };
-
-    protected Recipe(Parcel in) {
-        this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.name = ((String) in.readValue((String.class.getClassLoader())));
-        in.readList(this.ingredients, (Ingredient.class.getClassLoader()));
-        in.readList(this.steps, (Step.class.getClassLoader()));
-        this.servings = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.image = ((String) in.readValue((String.class.getClassLoader())));
-    }
-
-    public Recipe() {
-    }
-
+    @ParcelProperty("id")
     public Integer getId() {
         return id;
     }
 
+    @ParcelProperty("id")
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @ParcelProperty("name")
     public String getName() {
         return name;
     }
 
+    @ParcelProperty("name")
     public void setName(String name) {
         this.name = name;
     }
 
+    @ParcelProperty("ingredients")
     public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
+    @ParcelProperty("ingredients")
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
+    @ParcelProperty("steps")
     public List<Step> getSteps() {
         return steps;
     }
 
+    @ParcelProperty("steps")
     public void setSteps(List<Step> steps) {
         this.steps = steps;
     }
 
+    @ParcelProperty("servings")
     public Integer getServings() {
         return servings;
     }
 
+    @ParcelProperty("servings")
     public void setServings(Integer servings) {
         this.servings = servings;
     }
 
+    @ParcelProperty("image")
     public String getImage() {
         return image;
     }
 
+    @ParcelProperty("image")
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
-        dest.writeValue(name);
-        dest.writeList(ingredients);
-        dest.writeList(steps);
-        dest.writeValue(servings);
-        dest.writeValue(image);
-    }
-
-    public int describeContents() {
-        return 0;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.shu.bakingtime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.utils.BakingTimeUtils;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +31,7 @@ import retrofit2.Response;
 public class RecipesActivity extends AppCompatActivity {
 
     public static final String TAG = RecipesActivity.class.getSimpleName();
+    public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
     private RecyclerView mRecycleView;
     private RecipesRecyclerViewAdapter mRecipesAdapter;
@@ -35,6 +39,8 @@ public class RecipesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: ");
+
         setContentView(R.layout.activity_recipes);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -43,11 +49,47 @@ public class RecipesActivity extends AppCompatActivity {
         mRecycleView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.columns)));
 
         final List<Recipe> recipeList = new ArrayList<>();
-        mRecipesAdapter = new RecipesRecyclerViewAdapter(recipeList);
+        mRecipesAdapter = new RecipesRecyclerViewAdapter(this, recipeList);
         mRecycleView.setAdapter(mRecipesAdapter);
 
         loadRecipes();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: ");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
     }
 
     private void loadRecipes() {
@@ -76,6 +118,13 @@ public class RecipesActivity extends AppCompatActivity {
         });
     }
 
+    private void onRecipesAdapterViewHolderClick(int position){
+        Toast.makeText(this, "clicked " + position, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(this, RecipeStepsActivity.class);
+        i.putExtra(EXTRA_RECIPE, Parcels.wrap(mRecipesAdapter.mData.get(position)));
+        startActivity(i);
+    };
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_receipes, menu);
@@ -101,16 +150,19 @@ public class RecipesActivity extends AppCompatActivity {
 
         List<Recipe> mData;
 
-        public RecipesRecyclerViewAdapter(List<Recipe> data) {
-            mData = data;
+        RecipesActivity mListener;
 
+        public RecipesRecyclerViewAdapter(RecipesActivity parent, List<Recipe> data) {
+            mData = data;
+            mListener = parent;
         }
 
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recipe_content, viewGroup, false);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recipe_item_content, viewGroup, false);
+
             return new ViewHolder(view);
         }
 
@@ -130,15 +182,22 @@ public class RecipesActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             final TextView mIdView;
             final TextView mContentView;
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.id_text);
-                mContentView = (TextView) view.findViewById(R.id.content);
+                mIdView = (TextView) view.findViewById(R.id.tv_step_id);
+                mContentView = (TextView) view.findViewById(R.id.tv_step_description);
+
+                view.setOnClickListener(this);
             }
+
+            @Override
+            public void onClick(View v) {
+                mListener.onRecipesAdapterViewHolderClick(getAdapterPosition());
+            };
         }
     }
 }

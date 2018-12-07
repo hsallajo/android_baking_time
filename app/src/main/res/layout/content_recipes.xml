@@ -8,4 +8,4 @@
     android:layout_marginLeft="@dimen/margin_small"
     android:layout_marginRight="@dimen/margin_small"
     tools:context="com.shu.bakingtime.RecipesActivity"
-    tools:listitem="@layout/recipe_content" />
+    tools:listitem="@layout/recipe_item_content" />

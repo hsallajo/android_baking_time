@@ -1,11 +1,13 @@
 package com.shu.bakingtime.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Step implements Parcelable
+import org.parceler.Parcel;
+import org.parceler.ParcelProperty;
+
+@Parcel
+public class Step
 {
 
     @SerializedName("id")
@@ -23,84 +25,55 @@ public class Step implements Parcelable
     @SerializedName("thumbnailURL")
     @Expose
     private String thumbnailURL;
-    public final static Parcelable.Creator<Step> CREATOR = new Creator<Step>() {
 
-
-        @SuppressWarnings({
-                "unchecked"
-        })
-        public Step createFromParcel(Parcel in) {
-            return new Step(in);
-        }
-
-        public Step[] newArray(int size) {
-            return (new Step[size]);
-        }
-
-    }
-            ;
-
-    protected Step(Parcel in) {
-        this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.shortDescription = ((String) in.readValue((String.class.getClassLoader())));
-        this.description = ((String) in.readValue((String.class.getClassLoader())));
-        this.videoURL = ((String) in.readValue((String.class.getClassLoader())));
-        this.thumbnailURL = ((String) in.readValue((String.class.getClassLoader())));
-    }
-
-    public Step() {
-    }
-
+    @ParcelProperty("id")
     public Integer getId() {
         return id;
     }
 
+    @ParcelProperty("id")
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @ParcelProperty("shortDescription")
     public String getShortDescription() {
         return shortDescription;
     }
 
+    @ParcelProperty("shortDescription")
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
     }
 
+    @ParcelProperty("description")
     public String getDescription() {
         return description;
     }
 
+    @ParcelProperty("description")
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @ParcelProperty("videoURL")
     public String getVideoURL() {
         return videoURL;
     }
 
+    @ParcelProperty("videoURL")
     public void setVideoURL(String videoURL) {
         this.videoURL = videoURL;
     }
 
+    @ParcelProperty("thumbnailURL")
     public String getThumbnailURL() {
         return thumbnailURL;
     }
 
+    @ParcelProperty("thumbnailURL")
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
-        dest.writeValue(shortDescription);
-        dest.writeValue(description);
-        dest.writeValue(videoURL);
-        dest.writeValue(thumbnailURL);
-    }
-
-    public int describeContents() {
-        return 0;
     }
 
 }
