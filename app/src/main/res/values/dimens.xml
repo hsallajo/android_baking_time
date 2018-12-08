@@ -8,4 +8,6 @@
     <integer name="columns">1</integer>
     <dimen name="app_bar_height">200dp</dimen>
     <dimen name="item_width">240dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="margin_xsmall">4dp</dimen>
 </resources>

@@ -5,21 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
-import com.shu.bakingtime.dummy.DummyContent;
+import com.shu.bakingtime.model.Ingredient;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.model.Step;
 
@@ -32,6 +35,8 @@ import static com.shu.bakingtime.RecipesActivity.EXTRA_RECIPE;
 public class RecipeStepsActivity extends AppCompatActivity {
 
     public static final String TAG = RecipeStepsActivity.class.getSimpleName();
+    public static final int TYPE_HEADER = 1;
+    public static final int TYPE_ITEM = 0;
 
     private boolean mTwoPane;
 
@@ -44,7 +49,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_recipe_steps);
 
-        if(getIntent().hasExtra(EXTRA_RECIPE)){
+        if (getIntent().hasExtra(EXTRA_RECIPE)) {
             Parcelable p = getIntent().getParcelableExtra(EXTRA_RECIPE);
             mRecipeData = Parcels.unwrap(p);
         }
@@ -122,19 +127,20 @@ public class RecipeStepsActivity extends AppCompatActivity {
         Log.d(TAG, "onRestart: ");
     }
 
-    public static class RecipeStepsRecyclerViewAdapter
-            extends RecyclerView.Adapter<RecipeStepsRecyclerViewAdapter.ViewHolder> {
+    public class RecipeStepsRecyclerViewAdapter
+            extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final RecipeStepsActivity mParentActivity;
         private final List<Step> mSteps;
         private final boolean mTwoPane;
+        //private RecyclerView mRecyclerView;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Step stepData = (Step) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putParcelable(RecipeStepDetailFragment.ARG_ITEM_ID, Parcels.wrap(stepData));
+                    arguments.putParcelable(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(stepData));
                     RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -143,7 +149,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                    intent.putExtra(RecipeStepDetailFragment.ARG_ITEM_ID, Parcels.wrap(stepData));
+                    intent.putExtra(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(stepData));
 
                     context.startActivity(intent);
                 }
@@ -156,34 +162,162 @@ public class RecipeStepsActivity extends AppCompatActivity {
             mSteps = steps;
             mParentActivity = parent;
             mTwoPane = twoPane;
+            
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recipe_steps_item_content, parent, false);
-            return new ViewHolder(view);
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+
+            //mRecyclerView = recyclerView;
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mStepId.setText("#" + Integer.toString(mSteps.get(position).getId()) + ":");
-            holder.mStepDescription.setText(mSteps.get(position).getShortDescription());
-
-            holder.itemView.setTag(mSteps.get(position));
-            holder.itemView.setOnClickListener(mOnClickListener);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == TYPE_ITEM) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.recipe_steps_item_content, parent, false);
+                return new ItemViewHolder(view);
+            }
+            /* TYPE_HEADER */
+            else {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.receipe_steps_header_content, parent, false);
+                return new HeaderViewHolder(view);
+            }
         }
 
+        @Override
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+
+            if (position == 0 && holder.getItemViewType() == TYPE_HEADER) {
+                HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+                headerViewHolder.bind(position);
+            } else {
+                ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+                itemViewHolder.bind(position);
+
+                itemViewHolder.itemView.setTag(mSteps.get(position));
+                itemViewHolder.itemView.setOnClickListener(mOnClickListener);
+            }
+
+        }
+        
         @Override
         public int getItemCount() {
             return mSteps.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return TYPE_HEADER;
+            } else {
+                return TYPE_ITEM;
+            }
+        }
+
+
+        class HeaderViewHolder extends RecyclerView.ViewHolder {
+            final ListView mIngredientView;
+            final IngredientAdapter ingredientAdapter;
+
+            public void bind(int position) {
+            }
+
+            HeaderViewHolder(View view) {
+                super(view);
+                mIngredientView = (ListView) view.findViewById(R.id.lv_ingredients);
+
+                final List<Ingredient> ingredients = mRecipeData.getIngredients();
+                ingredientAdapter = new IngredientAdapter(getApplicationContext(), ingredients);
+                mIngredientView.setAdapter(ingredientAdapter);
+
+                int rowHeight, listHeight = 0;
+                for (int i = 0; i < ingredientAdapter.getCount(); i++) {
+                    View v = ingredientAdapter.getView(i, null, mIngredientView);
+                    if(v != null){
+                        v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+
+                                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                        rowHeight = v.getMeasuredHeight();
+                        listHeight = listHeight + rowHeight;
+                        Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
+                    }
+                }
+                listHeight = listHeight + mIngredientView.getDividerHeight() * ingredients.size();
+                Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
+
+                ViewGroup.LayoutParams p = mIngredientView.getLayoutParams();
+                p.height = listHeight;
+                mIngredientView.setLayoutParams(p);
+                mIngredientView.requestLayout();
+            }
+
+            class IngredientAdapter extends BaseAdapter {
+
+                private final List<Ingredient> mIngredients;
+                private Context context;
+
+                public IngredientAdapter(Context context, List<Ingredient> ingredients) {
+                    super();
+                    this.mIngredients = ingredients;
+                    this.context = context;
+                }
+
+                @Override
+                public int getCount() {
+                    Log.d(TAG, "getCount: " + mIngredients.size());
+                    return mIngredients.size();
+                }
+
+                @Override
+                public Object getItem(int position) {
+                    Log.d(TAG, "getItem: " + position);
+                    return mIngredients.get(position);
+                }
+
+                @Override
+                public long getItemId(int position) {
+                    return position;
+                }
+
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+
+                    if (convertView == null) {
+                        convertView = LayoutInflater.from(context).
+                                inflate(R.layout.ingredient, parent, false);
+                    }
+
+                    Ingredient currentItem = mIngredients.get(position);
+
+                    TextView ingredientView =
+                            convertView.findViewById(R.id.tv_ingredient);
+                    TextView quantityView =
+                            convertView.findViewById(R.id.tv_quantity);
+                    TextView measureView =
+                            convertView.findViewById(R.id.tv_measure);
+
+                    ingredientView.setText(currentItem.getIngredient());
+                    quantityView.setText(Float.toString(currentItem.getQuantity()));
+                    measureView.setText(currentItem.getMeasure());
+
+                    return convertView;
+                }
+            }
+        }
+
+        class ItemViewHolder extends RecyclerView.ViewHolder {
             final TextView mStepId;
             final TextView mStepDescription;
 
-            ViewHolder(View view) {
+            public void bind(int position) {
+                mStepId.setText("#" + Integer.toString(mSteps.get(position).getId()) + ":");
+                mStepDescription.setText(mSteps.get(position).getShortDescription());
+            }
+
+            private ItemViewHolder(View view) {
                 super(view);
                 mStepId = (TextView) view.findViewById(R.id.tv_step_id);
                 mStepDescription = (TextView) view.findViewById(R.id.tv_step_description);
