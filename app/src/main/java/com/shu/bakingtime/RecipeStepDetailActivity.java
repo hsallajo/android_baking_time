@@ -96,7 +96,8 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, RecipeStepsActivity.class));
+            //navigateUpTo(new Intent(this, RecipeStepsActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
