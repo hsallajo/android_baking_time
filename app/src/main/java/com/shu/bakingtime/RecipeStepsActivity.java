@@ -5,16 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,8 +52,8 @@ public class RecipeStepsActivity extends AppCompatActivity {
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         toolbar.setTitle(mRecipeData.getName());
+        setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -88,7 +85,10 @@ public class RecipeStepsActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new RecipeStepsRecyclerViewAdapter(this, mRecipeData.getSteps(), mTwoPane));
+        recyclerView.setAdapter(
+                new RecipeStepsRecyclerViewAdapter(this
+                        , mRecipeData.getSteps()
+                        , mTwoPane));
     }
 
     @Override
@@ -134,24 +134,17 @@ public class RecipeStepsActivity extends AppCompatActivity {
         private final List<Step> mSteps;
         private final boolean mTwoPane;
         //private RecyclerView mRecyclerView;
+
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Step stepData = (Step) view.getTag();
-                if (mTwoPane) {
-                    Bundle arguments = new Bundle();
-                    arguments.putParcelable(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(stepData));
-                    RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-                    fragment.setArguments(arguments);
-                    mParentActivity.getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.recipe_step_detail_container, fragment)
-                            .commit();
-                } else {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, RecipeStepDetailActivity.class);
-                    intent.putExtra(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(stepData));
 
-                    context.startActivity(intent);
+                Step stepData = (Step) view.getTag();
+
+                if (mTwoPane) {
+                    setupStepDetailFragment(stepData);
+                } else {
+                    setupStepDetailActivity(view, stepData);
                 }
             }
         };
@@ -165,15 +158,37 @@ public class RecipeStepsActivity extends AppCompatActivity {
             
         }
 
-        @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        private void setupStepDetailFragment(Step data){
+
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(data));
+            RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
+            fragment.setArguments(arguments);
+            mParentActivity.getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipe_step_detail_container, fragment)
+                    .commit();
+        }
+
+        private void setupStepDetailActivity(View view, Step data){
+
+            Context context = view.getContext();
+            Intent intent = new Intent(context, RecipeStepDetailActivity.class);
+            intent.putExtra(RecipeStepDetailFragment.ARG_STEP_DETAIL, Parcels.wrap(data));
+            context.startActivity(intent);
+
+        }
+
+ /*       @Override
+          public void onAttachedToRecyclerView(RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
 
             //mRecyclerView = recyclerView;
-        }
+        }*/
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            /* TYPE_ITEM */
             if (viewType == TYPE_ITEM) {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recipe_steps_item_content, parent, false);
@@ -190,17 +205,17 @@ public class RecipeStepsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
 
-            if (position == 0 && holder.getItemViewType() == TYPE_HEADER) {
+            if (position == 0
+                    && (holder.getItemViewType() == TYPE_HEADER)) {
                 HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
                 headerViewHolder.bind(position);
-            } else {
+            }
+            else {
                 ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
                 itemViewHolder.bind(position);
-
                 itemViewHolder.itemView.setTag(mSteps.get(position));
                 itemViewHolder.itemView.setOnClickListener(mOnClickListener);
             }
-
         }
         
         @Override
@@ -219,8 +234,10 @@ public class RecipeStepsActivity extends AppCompatActivity {
 
 
         class HeaderViewHolder extends RecyclerView.ViewHolder {
+
             final ListView mIngredientView;
-            final IngredientAdapter ingredientAdapter;
+            final IngredientAdapter mIngredientAdapter;
+            final List<Ingredient> mIngredients;
 
             public void bind(int position) {
             }
@@ -228,25 +245,24 @@ public class RecipeStepsActivity extends AppCompatActivity {
             HeaderViewHolder(View view) {
                 super(view);
                 mIngredientView = (ListView) view.findViewById(R.id.lv_ingredients);
-
-                final List<Ingredient> ingredients = mRecipeData.getIngredients();
-                ingredientAdapter = new IngredientAdapter(getApplicationContext(), ingredients);
-                mIngredientView.setAdapter(ingredientAdapter);
+                mIngredients = mRecipeData.getIngredients();
+                mIngredientAdapter = new IngredientAdapter(getApplicationContext(), mIngredients);
+                mIngredientView.setAdapter(mIngredientAdapter);
 
                 int rowHeight, listHeight = 0;
-                for (int i = 0; i < ingredientAdapter.getCount(); i++) {
-                    View v = ingredientAdapter.getView(i, null, mIngredientView);
+                for (int i = 0; i < mIngredientAdapter.getCount(); i++) {
+                    View v = mIngredientAdapter.getView(i, null, mIngredientView);
                     if(v != null){
-                        v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-
+                        v.measure(
+                                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
                         rowHeight = v.getMeasuredHeight();
                         listHeight = listHeight + rowHeight;
-                        Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
+                        //Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
                     }
                 }
-                listHeight = listHeight + mIngredientView.getDividerHeight() * ingredients.size();
-                Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
+                listHeight = listHeight + mIngredientView.getDividerHeight() * mIngredients.size();
+                //Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
 
                 ViewGroup.LayoutParams p = mIngredientView.getLayoutParams();
                 p.height = listHeight;
@@ -267,13 +283,11 @@ public class RecipeStepsActivity extends AppCompatActivity {
 
                 @Override
                 public int getCount() {
-                    Log.d(TAG, "getCount: " + mIngredients.size());
                     return mIngredients.size();
                 }
 
                 @Override
                 public Object getItem(int position) {
-                    Log.d(TAG, "getItem: " + position);
                     return mIngredients.get(position);
                 }
 
@@ -319,7 +333,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
 
             private ItemViewHolder(View view) {
                 super(view);
-                mStepId = (TextView) view.findViewById(R.id.tv_step_id);
+                mStepId = (TextView) view.findViewById(R.id.tv_step_number);
                 mStepDescription = (TextView) view.findViewById(R.id.tv_step_description);
             }
         }

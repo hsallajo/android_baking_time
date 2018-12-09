@@ -104,26 +104,32 @@ public class RecipesActivity extends AppCompatActivity {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
 
+                    Log.i(TAG, "BakingTime recipe loading completed. ");
                     mRecipesAdapter.refreshData(response.body());
 
                 } else{
-                    Log.d(TAG, "onResponse: response.code " + response.code());
+                    Log.d(TAG, "BakingTime recipe loading did not succeed, response code: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t);
+                Log.d(TAG, "BakingTime recipe loading error: " + t);
             }
         });
     }
 
     private void onRecipesAdapterViewHolderClick(int position){
+
         Toast.makeText(this, "clicked " + position, Toast.LENGTH_SHORT).show();
+        createStepsActivity(position);
+    };
+
+    private void createStepsActivity(int position){
         Intent i = new Intent(this, RecipeStepsActivity.class);
         i.putExtra(EXTRA_RECIPE, Parcels.wrap(mRecipesAdapter.mData.get(position)));
         startActivity(i);
-    };
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,7 +155,6 @@ public class RecipesActivity extends AppCompatActivity {
     public static class RecipesRecyclerViewAdapter extends RecyclerView.Adapter<RecipesRecyclerViewAdapter.ViewHolder> {
 
         List<Recipe> mData;
-
         RecipesActivity mListener;
 
         public RecipesRecyclerViewAdapter(RecipesActivity parent, List<Recipe> data) {
@@ -162,13 +167,12 @@ public class RecipesActivity extends AppCompatActivity {
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recipe_item_content, viewGroup, false);
-
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-            viewHolder.mIdView.setText(mData.get(i).getName());
+            viewHolder.mStepNumberView.setText(mData.get(i).getName());
         }
 
         @Override
@@ -183,12 +187,12 @@ public class RecipesActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            final TextView mIdView;
+            final TextView mStepNumberView;
             final TextView mContentView;
 
             ViewHolder(View view) {
                 super(view);
-                mIdView = (TextView) view.findViewById(R.id.tv_step_id);
+                mStepNumberView = (TextView) view.findViewById(R.id.tv_step_number);
                 mContentView = (TextView) view.findViewById(R.id.tv_step_description);
 
                 view.setOnClickListener(this);
