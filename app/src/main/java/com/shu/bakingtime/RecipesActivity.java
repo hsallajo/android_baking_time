@@ -1,8 +1,11 @@
 package com.shu.bakingtime;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +38,7 @@ public class RecipesActivity extends AppCompatActivity {
 
     private RecyclerView mRecycleView;
     private RecipesRecyclerViewAdapter mRecipesAdapter;
+    private RecipesViewModel mModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,13 @@ public class RecipesActivity extends AppCompatActivity {
         mRecipesAdapter = new RecipesRecyclerViewAdapter(this, recipeList);
         mRecycleView.setAdapter(mRecipesAdapter);
 
-        loadRecipes();
+        mModel = ViewModelProviders.of(this).get(RecipesViewModel.class);
+        mModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipes) {
+                mRecipesAdapter.refreshData(recipes);
+            }
+        });
 
     }
 
@@ -92,33 +102,6 @@ public class RecipesActivity extends AppCompatActivity {
         Log.d(TAG, "onRestart: ");
     }
 
-    private void loadRecipes() {
-
-        if(!BakingTimeUtils.isOnline(this)) {
-            Toast.makeText(this, getString(R.string.msg_no_network), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        BakingTimeUtils.getBakingTimeService().getRecipes().enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if (response.isSuccessful()) {
-
-                    Log.i(TAG, "BakingTime recipe loading completed. ");
-                    mRecipesAdapter.refreshData(response.body());
-
-                } else{
-                    Log.d(TAG, "BakingTime recipe loading did not succeed, response code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                Log.d(TAG, "BakingTime recipe loading error: " + t);
-            }
-        });
-    }
-
     private void onRecipesAdapterViewHolderClick(int position){
 
         Toast.makeText(this, "clicked " + position, Toast.LENGTH_SHORT).show();
@@ -145,7 +128,7 @@ public class RecipesActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            loadRecipes();
+            mModel.refresh();
             return true;
         }
 
