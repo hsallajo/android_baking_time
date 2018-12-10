@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.shu.bakingtime.database.RecipeDatabase;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.utils.BakingTimeUtils;
 
@@ -23,22 +24,28 @@ public class RecipesViewModel extends AndroidViewModel {
 
     private static final String TAG = RecipesViewModel.class.getSimpleName();
     private MutableLiveData<List<Recipe>> recipeList;
+    private LiveData<List<Recipe>> mRecipeList;
+
+    private RecipeDatabase mDatabase;
 
     public RecipesViewModel(@NonNull Application application) {
         super(application);
 
+        mDatabase = RecipeDatabase.getInstance(application.getApplicationContext());
+        mRecipeList = mDatabase.recipesDao().loadAllRecipes();
+
         if(recipeList == null){
-            Log.d(TAG, "RecipesViewModel: recipeList=" + recipeList + ". Starting loading.");
             recipeList = new MutableLiveData<>();
-            loadRecipes();
         }
     }
 
-    public LiveData<List<Recipe>> getRecipes(){return recipeList;}
+    public LiveData<List<Recipe>> getRecipes(){return mRecipeList;}
 
-    public void refresh(){loadRecipes();}
+    public void loadRecipes(){
+        loadRecipesFromDatabase();
+    }
 
-    private void loadRecipes() {
+    private void loadRecipesFromDatabase() {
 
         Context context = getApplication().getApplicationContext();
         if(!BakingTimeUtils.isOnline(context)) {
@@ -51,12 +58,10 @@ public class RecipesViewModel extends AndroidViewModel {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
 
-                    Log.i(TAG, "BakingTime recipe loading completed. ");
-                    // mRecipesAdapter.refreshData(response.body());
-                    // todo update cache with new data
                     if(response.body() != null){
                         List<Recipe> recipes = response.body();
-                        refreshCache(recipes);
+                        //refreshCache(recipes);
+                        writeDatabase(recipes);
                     }
 
                 } else{
@@ -86,5 +91,14 @@ public class RecipesViewModel extends AndroidViewModel {
         t.clear();
         t.addAll(e);
         recipeList.setValue(t);
+    }
+
+    private void writeDatabase(List<Recipe> recipes){
+        for (Recipe recipe: recipes
+             ) {
+            Log.d(TAG, "writeDatabase: " + recipe.getName());
+            mDatabase.recipesDao().insert(recipe);
+        }
+
     }
 }

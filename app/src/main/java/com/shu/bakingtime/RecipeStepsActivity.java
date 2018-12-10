@@ -38,7 +38,6 @@ public class RecipeStepsActivity extends AppCompatActivity {
     private boolean mTwoPane;
 
     private Recipe mRecipeData;
-    private RecipeDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +68,6 @@ public class RecipeStepsActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
-
-        mDatabase = RecipeDatabase.getInstance(getApplicationContext());
 
         View recyclerView = findViewById(R.id.recipe_step_list);
         assert recyclerView != null;

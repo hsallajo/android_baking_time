@@ -14,12 +14,14 @@ public abstract class RecipeDatabase extends RoomDatabase {
     private static final String DB_NAME = "recipe_db";
     private static RecipeDatabase sDbInstance;
 
-    public static RecipeDatabase getInstance(Context c){
-        if(sDbInstance == null){
-            synchronized (LOCK){
+    public static RecipeDatabase getInstance(Context c) {
+        if (sDbInstance == null) {
+            synchronized (LOCK) {
                 sDbInstance = Room.databaseBuilder(c.getApplicationContext()
-                , RecipeDatabase.class
-                , RecipeDatabase.DB_NAME).build();
+                        , RecipeDatabase.class
+                        , RecipeDatabase.DB_NAME)
+                        .allowMainThreadQueries()
+                        .build();
             }
         }
         return sDbInstance;

@@ -20,16 +20,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shu.bakingtime.model.Recipe;
-import com.shu.bakingtime.utils.BakingTimeUtils;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RecipesActivity extends AppCompatActivity {
 
@@ -60,7 +55,11 @@ public class RecipesActivity extends AppCompatActivity {
         mModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
-                mRecipesAdapter.refreshData(recipes);
+                if(recipes == null || recipes.size() == 0){
+                    Log.i(TAG, "no recipes found. Starting db sync.");
+                    mModel.loadRecipes();}
+                 else
+                    mRecipesAdapter.refreshData(recipes);
             }
         });
 
@@ -128,7 +127,7 @@ public class RecipesActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            mModel.refresh();
+            mModel.loadRecipes();
             return true;
         }
 
