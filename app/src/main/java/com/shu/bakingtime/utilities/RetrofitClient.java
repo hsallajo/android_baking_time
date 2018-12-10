@@ -1,4 +1,4 @@
-package com.shu.bakingtime.utils;
+package com.shu.bakingtime.utilities;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

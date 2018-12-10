@@ -5,13 +5,15 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.shu.bakingtime.database.RecipeDatabase;
 import com.shu.bakingtime.model.Recipe;
-import com.shu.bakingtime.utils.BakingTimeUtils;
+import com.shu.bakingtime.sync.BakingTimeSyncService;
+import com.shu.bakingtime.utilities.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,82 +25,25 @@ import retrofit2.Response;
 public class RecipesViewModel extends AndroidViewModel {
 
     private static final String TAG = RecipesViewModel.class.getSimpleName();
-    private MutableLiveData<List<Recipe>> recipeList;
     private LiveData<List<Recipe>> mRecipeList;
 
     private RecipeDatabase mDatabase;
+    private Context context;
 
     public RecipesViewModel(@NonNull Application application) {
         super(application);
 
-        mDatabase = RecipeDatabase.getInstance(application.getApplicationContext());
+        context = application.getApplicationContext();
+        mDatabase = RecipeDatabase.getInstance(context);
         mRecipeList = mDatabase.recipesDao().loadAllRecipes();
 
-        if(recipeList == null){
-            recipeList = new MutableLiveData<>();
-        }
     }
 
     public LiveData<List<Recipe>> getRecipes(){return mRecipeList;}
 
     public void loadRecipes(){
-        loadRecipesFromDatabase();
+        Intent i = new Intent(context, BakingTimeSyncService.class);
+        context.startService(i);
     }
 
-    private void loadRecipesFromDatabase() {
-
-        Context context = getApplication().getApplicationContext();
-        if(!BakingTimeUtils.isOnline(context)) {
-            Toast.makeText(context, context.getString(R.string.msg_no_network), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        BakingTimeUtils.getBakingTimeService().getRecipes().enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if (response.isSuccessful()) {
-
-                    if(response.body() != null){
-                        List<Recipe> recipes = response.body();
-                        //refreshCache(recipes);
-                        writeDatabase(recipes);
-                    }
-
-                } else{
-                    Log.d(TAG, "BakingTime recipe loading did not succeed, response code: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                Log.d(TAG, "BakingTime recipe loading error: " + t);
-            }
-        });
-    }
-
-    private void refreshCache(List<Recipe> e ){
-
-        if (e == null || e.isEmpty()) {
-            return;
-        }
-
-        List<Recipe> t = recipeList.getValue();
-
-        if (t == null) {
-            t = new ArrayList<>();
-        }
-
-        t.clear();
-        t.addAll(e);
-        recipeList.setValue(t);
-    }
-
-    private void writeDatabase(List<Recipe> recipes){
-        for (Recipe recipe: recipes
-             ) {
-            Log.d(TAG, "writeDatabase: " + recipe.getName());
-            mDatabase.recipesDao().insert(recipe);
-        }
-
-    }
 }

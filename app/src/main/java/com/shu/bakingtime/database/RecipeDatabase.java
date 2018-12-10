@@ -20,7 +20,7 @@ public abstract class RecipeDatabase extends RoomDatabase {
                 sDbInstance = Room.databaseBuilder(c.getApplicationContext()
                         , RecipeDatabase.class
                         , RecipeDatabase.DB_NAME)
-                        .allowMainThreadQueries()
+                        //.allowMainThreadQueries()
                         .build();
             }
         }

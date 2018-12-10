@@ -3,6 +3,7 @@ package com.shu.bakingtime.database;
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.shu.bakingtime.model.Recipe;
@@ -14,6 +15,6 @@ public interface RecipesDao {
     @Query("SELECT * FROM recipe")
     LiveData<List<Recipe>> loadAllRecipes();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Recipe recipe);
 }
