@@ -15,10 +15,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import com.shu.bakingtime.database.RecipeDatabase;
 import com.shu.bakingtime.model.Ingredient;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.model.Step;
@@ -38,6 +38,7 @@ public class RecipeStepsActivity extends AppCompatActivity {
     private boolean mTwoPane;
 
     private Recipe mRecipeData;
+    private RecipeDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,8 @@ public class RecipeStepsActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        mDatabase = RecipeDatabase.getInstance(getApplicationContext());
 
         View recyclerView = findViewById(R.id.recipe_step_list);
         assert recyclerView != null;
