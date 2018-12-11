@@ -17,6 +17,7 @@
         android:layout_marginStart="@dimen/margin_small"
         android:gravity="left"
         android:maxLines="2"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/guidelineLeft" />
@@ -27,6 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginEnd="@dimen/margin_small"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toEndOf="@id/guidelineLeft"
         app:layout_constraintBottom_toBottomOf="@+id/tv_ingredient" />
 
@@ -38,6 +40,7 @@
         android:layout_marginEnd="@dimen/margin_small"
         android:textSize="12sp"
         android:textAllCaps="false"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintStart_toEndOf="@id/guidelineRight"
         app:layout_constraintBottom_toBottomOf="@+id/tv_ingredient" />
 
