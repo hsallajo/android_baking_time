@@ -1,5 +1,6 @@
 package com.shu.bakingtime;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,10 +9,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_NEXT_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_PREV_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXTRA_NEXT_PREV_CLICK_EVENT;
 
 public class StepActivity extends AppCompatActivity {
 
     public static final String TAG = StepActivity.class.getSimpleName();
+
+    private boolean mIsPreviousStep;
+    private boolean mIsNextStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +29,18 @@ public class StepActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
 
         setContentView(R.layout.activity_step);
+
+        mIsPreviousStep = false;
+        mIsNextStep = false;
+
+        if(getIntent().getExtras() != null){
+            if(getIntent().getExtras().containsKey(EXTRA_IS_NEXT_STEP))
+                mIsNextStep = getIntent().getExtras().getBoolean(EXTRA_IS_NEXT_STEP);
+            if(getIntent().getExtras().containsKey(EXTRA_IS_PREV_STEP)) {
+                mIsPreviousStep = getIntent().getExtras().getBoolean(EXTRA_IS_PREV_STEP);
+                Log.d(TAG, "onCreate: mIsPreviousStep is: " + mIsPreviousStep);
+            }
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -56,6 +78,13 @@ public class StepActivity extends AppCompatActivity {
                     .add(R.id.step_player_fragment_container, playerFragment)
                     .commit();
         }
+
+        Button prev = findViewById(R.id.step_btn_prev);
+        prev.setClickable(mIsPreviousStep);
+        //prev.setClickable(true);
+        Button next = findViewById(R.id.step_btn_next);
+        next.setClickable(mIsNextStep);
+
     }
 
     @Override
@@ -103,5 +132,20 @@ public class StepActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onNextButtonClick(View view) {
+        Intent i = new Intent();
+        i.putExtra(EXTRA_NEXT_PREV_CLICK_EVENT, 3);
+        setResult(RESULT_OK, i);
+        finish();
+    }
+
+    public void onPrevButtonClick(View view) {
+        Intent i = new Intent();
+        Log.d(TAG, "onPrevButtonClick: ");
+        i.putExtra(EXTRA_NEXT_PREV_CLICK_EVENT, 2);
+        setResult(RESULT_OK, i);
+        finish();
     }
 }
