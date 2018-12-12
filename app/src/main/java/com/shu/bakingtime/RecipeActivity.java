@@ -171,7 +171,7 @@ public class RecipeActivity extends AppCompatActivity {
             PlayerFragment playerFragment = new PlayerFragment();
             playerFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_player_container, playerFragment)
+                    .add(R.id.player_fragment_container, playerFragment)
                     .commit();
         }
 
@@ -183,13 +183,6 @@ public class RecipeActivity extends AppCompatActivity {
             context.startActivity(intent);
 
         }
-
- /*       @Override
-          public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-            super.onAttachedToRecyclerView(recyclerView);
-
-            //mRecyclerView = recyclerView;
-        }*/
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

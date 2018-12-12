@@ -13,9 +13,6 @@ import com.shu.bakingtime.model.Step;
 
 import org.parceler.Parcels;
 
-/**
- * A fragment representing a single RecipeStep detail screen.
- */
 public class StepFragment extends Fragment {
 
     public static final String ARG_STEP_DETAIL = "item_id";
@@ -30,9 +27,7 @@ public class StepFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_STEP_DETAIL)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
+
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DETAIL));
 
             Activity activity = this.getActivity();

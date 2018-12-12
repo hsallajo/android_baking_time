@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -36,6 +38,8 @@ public class PlayerFragment extends Fragment {
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
 
+    ImageView mNoVideoPlaceHolder;
+
     public PlayerFragment(){}
 
     @Override
@@ -50,8 +54,8 @@ public class PlayerFragment extends Fragment {
 
     private void initializePlayer(Uri uri) {
 
-        uri = Uri.parse("asset:///2-mix-all-wet-ingredients-yellow-cake.mp4");
         if(mExoPlayer == null){
+
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
@@ -70,23 +74,34 @@ public class PlayerFragment extends Fragment {
         }
     }
     private void releasePlayer(){
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mExoPlayer != null){
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.step_player_view, container, false);
+        View rootView = inflater.inflate(R.layout.player, container, false);
+        mNoVideoPlaceHolder = rootView.findViewById(R.id.no_video_placeholder);
 
         if(mStep != null){
             mPlayerView = rootView.findViewById(R.id.playerView);
         }
 
-        Uri u = Uri.parse(mStep.getVideoURL());
-        initializePlayer(u);
+        Uri u = null;
+        if(!TextUtils.isEmpty(mStep.getVideoURL())){
+
+            mNoVideoPlaceHolder.setVisibility(View.INVISIBLE);
+            u = Uri.parse(mStep.getVideoURL());
+            initializePlayer(u);
+
+        } else{
+            mNoVideoPlaceHolder.setVisibility(View.VISIBLE);
+        }
 
         return rootView;
     }

@@ -9,12 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 
-/**
- * An activity representing a single RecipeStep detail screen. This
- * activity is only used on narrow width devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link RecipeActivity}.
- */
 public class StepActivity extends AppCompatActivity {
 
     public static final String TAG = StepActivity.class.getSimpleName();
@@ -59,7 +53,7 @@ public class StepActivity extends AppCompatActivity {
             PlayerFragment playerFragment = new PlayerFragment();
             playerFragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_player_container, playerFragment)
+                    .add(R.id.step_player_fragment_container, playerFragment)
                     .commit();
         }
     }
