@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.shu.bakingtime.model.Ingredient;
 import com.shu.bakingtime.model.Recipe;
@@ -40,7 +41,7 @@ public class RecipeActivity extends AppCompatActivity {
     public static final String EXTRA_IS_PREV_STEP = "EXTRA_IS_PREV_STEP";
 
     private boolean mTwoPane;
-    private RecipeStepsRecyclerViewAdapter mAdapter;
+    private StepsRecyclerViewAdapter mAdapter;
     private Recipe mRecipeData;
     private int mCurrentStep;
 
@@ -89,10 +90,13 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        mAdapter = new RecipeStepsRecyclerViewAdapter(this
+        Log.d(TAG, "setupRecyclerView: ");
+        mAdapter = new StepsRecyclerViewAdapter(this
                 , mRecipeData.getSteps()
                 , mTwoPane);
         recyclerView.setAdapter(mAdapter);
+
+        //recyclerView.setHasFixedSize(true);
     }
 
     @Override
@@ -146,7 +150,8 @@ public class RecipeActivity extends AppCompatActivity {
                     nextStep();
                     return;
                 }
-            } }
+            }
+        }
     }
 
     private void setupStepActivity(Step data) {
@@ -159,7 +164,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     }
 
-    private void setupStepFragment(Step data) {
+    private void setupStepFragments(Step data) {
 
         Bundle arguments = new Bundle();
         arguments.putParcelable(StepFragment.ARG_STEP_DETAIL, Parcels.wrap(data));
@@ -180,20 +185,20 @@ public class RecipeActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void previousStep(){
-        if(mCurrentStep - 1 < 0)
+    private void previousStep() {
+        if (mCurrentStep - 1 < 0)
             return;
 
         mCurrentStep -= 1;
-        setupStepActivity( mRecipeData.getSteps().get( mCurrentStep ));
+        setupStepActivity(mRecipeData.getSteps().get(mCurrentStep));
     }
 
-    private void nextStep(){
-        if(mCurrentStep + 1 >= mRecipeData.getSteps().size())
+    private void nextStep() {
+        if (mCurrentStep + 1 >= mRecipeData.getSteps().size())
             return;
 
         mCurrentStep += 1;
-        setupStepActivity( mRecipeData.getSteps().get( mCurrentStep ));
+        setupStepActivity(mRecipeData.getSteps().get(mCurrentStep));
     }
 
     private boolean isPreviousStep() {
@@ -204,12 +209,12 @@ public class RecipeActivity extends AppCompatActivity {
         return mCurrentStep < (mRecipeData.getSteps().size() - 1) ? true : false;
     }
 
-    public class RecipeStepsRecyclerViewAdapter
+    public class StepsRecyclerViewAdapter
             extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private final RecipeActivity mParentActivity;
         private final List<Step> mSteps;
         private final boolean mTwoPane;
+        RecyclerView mRecyclerView;
 
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
@@ -219,29 +224,49 @@ public class RecipeActivity extends AppCompatActivity {
                 mCurrentStep = stepData.getId();
 
                 if (mTwoPane) {
-                    setupStepFragment(stepData);
-                    notifyDataSetChanged();
+                    setupStepFragments(stepData);
+                    // bg color for visible (step) items need to be refreshed.
+                    notifyItemRangeChanged(1, getItemCount());
+
                 } else {
                     setupStepActivity(stepData);
                 }
             }
         };
 
-        RecipeStepsRecyclerViewAdapter(RecipeActivity parent,
-                                       List<Step> steps,
-                                       boolean twoPane) {
+        StepsRecyclerViewAdapter(RecipeActivity parent,
+                                 List<Step> steps,
+                                 boolean twoPane) {
             mSteps = steps;
-            mParentActivity = parent;
             mTwoPane = twoPane;
 
             mCurrentStep = 0;
             if (mTwoPane) {
                 Step stepData = mRecipeData.getSteps().get(mCurrentStep);
-                setupStepFragment(stepData);
+                setupStepFragments(stepData);
             }
 
         }
 
+        @Override
+        public int getItemCount() {
+            return mSteps.size() + 1;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0) {
+                return TYPE_HEADER;
+            } else {
+                return TYPE_ITEM;
+            }
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            this.mRecyclerView = recyclerView;
+        }
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -265,143 +290,132 @@ public class RecipeActivity extends AppCompatActivity {
 
             if (position == 0
                     && (holder.getItemViewType() == TYPE_HEADER)) {
+
                 HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
                 headerViewHolder.bind(position);
+
             } else {
+
                 ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+
                 itemViewHolder.bind(position);
                 itemViewHolder.itemView.setTag(mSteps.get(position - 1));
                 itemViewHolder.itemView.setOnClickListener(mOnClickListener);
 
-                if (mCurrentStep == (position - 1)){
-                    itemViewHolder.itemView.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
-                } else{
-                    itemViewHolder.itemView.setBackgroundColor(getResources().getColor(android.R.color.holo_green_light));
-                }
-        }
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return mSteps.size() + 1;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position == 0) {
-            return TYPE_HEADER;
-        } else {
-            return TYPE_ITEM;
-        }
-    }
-
-
-    class HeaderViewHolder extends RecyclerView.ViewHolder {
-
-        final ListView mIngredientView;
-        final IngredientAdapter mIngredientAdapter;
-        final List<Ingredient> mIngredients;
-
-        public void bind(int position) {
-        }
-
-        HeaderViewHolder(View view) {
-            super(view);
-            mIngredientView = (ListView) view.findViewById(R.id.lv_ingredients);
-            mIngredients = mRecipeData.getIngredients();
-            mIngredientAdapter = new IngredientAdapter(getApplicationContext(), mIngredients);
-            mIngredientView.setAdapter(mIngredientAdapter);
-
-            int rowHeight, listHeight = 0;
-            for (int i = 0; i < mIngredientAdapter.getCount(); i++) {
-                View v = mIngredientAdapter.getView(i, null, mIngredientView);
-                if (v != null) {
-                    v.measure(
-                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                    rowHeight = v.getMeasuredHeight();
-                    listHeight = listHeight + rowHeight;
-                    //Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
+                if (mCurrentStep == (position - 1)) {
+                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources(), android.R.color.holo_green_dark, null));
+                } else {
+                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources(), android.R.color.holo_green_light, null));
                 }
             }
-            listHeight = listHeight + mIngredientView.getDividerHeight() * mIngredients.size();
-            //Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
-
-            ViewGroup.LayoutParams p = mIngredientView.getLayoutParams();
-            p.height = listHeight;
-            mIngredientView.setLayoutParams(p);
-            mIngredientView.requestLayout();
         }
 
-        class IngredientAdapter extends BaseAdapter {
 
-            private final List<Ingredient> mIngredients;
-            private Context context;
+        class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-            public IngredientAdapter(Context context, List<Ingredient> ingredients) {
-                super();
-                this.mIngredients = ingredients;
-                this.context = context;
+            final ListView mIngredientView;
+            final IngredientAdapter mIngredientAdapter;
+            final List<Ingredient> mIngredients;
+
+            public void bind(int position) {
             }
 
-            @Override
-            public int getCount() {
-                return mIngredients.size();
+            HeaderViewHolder(View view) {
+                super(view);
+                mIngredientView = (ListView) view.findViewById(R.id.lv_ingredients);
+                mIngredients = mRecipeData.getIngredients();
+                mIngredientAdapter = new IngredientAdapter(getApplicationContext(), mIngredients);
+                mIngredientView.setAdapter(mIngredientAdapter);
+
+                int rowHeight, listHeight = 0;
+                for (int i = 0; i < mIngredientAdapter.getCount(); i++) {
+                    View v = mIngredientAdapter.getView(i, null, mIngredientView);
+                    if (v != null) {
+                        v.measure(
+                                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                        rowHeight = v.getMeasuredHeight();
+                        listHeight = listHeight + rowHeight;
+                        //Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
+                    }
+                }
+                listHeight = listHeight + mIngredientView.getDividerHeight() * mIngredients.size();
+                //Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
+
+                ViewGroup.LayoutParams p = mIngredientView.getLayoutParams();
+                p.height = listHeight;
+                mIngredientView.setLayoutParams(p);
+                mIngredientView.requestLayout();
             }
 
-            @Override
-            public Object getItem(int position) {
-                return mIngredients.get(position);
-            }
+            class IngredientAdapter extends BaseAdapter {
 
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
+                private final List<Ingredient> mIngredients;
+                private Context context;
 
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(context).
-                            inflate(R.layout.ingredient, parent, false);
+                public IngredientAdapter(Context context, List<Ingredient> ingredients) {
+                    super();
+                    this.mIngredients = ingredients;
+                    this.context = context;
                 }
 
-                Ingredient currentItem = mIngredients.get(position);
+                @Override
+                public int getCount() {
+                    return mIngredients.size();
+                }
 
-                TextView ingredientView =
-                        convertView.findViewById(R.id.tv_ingredient);
-                TextView quantityView =
-                        convertView.findViewById(R.id.tv_quantity);
-                TextView measureView =
-                        convertView.findViewById(R.id.tv_measure);
+                @Override
+                public Object getItem(int position) {
+                    return mIngredients.get(position);
+                }
 
-                ingredientView.setText(currentItem.getIngredient());
-                quantityView.setText(Float.toString(currentItem.getQuantity()));
-                measureView.setText(currentItem.getMeasure());
+                @Override
+                public long getItemId(int position) {
+                    return position;
+                }
 
-                return convertView;
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+
+                    if (convertView == null) {
+                        convertView = LayoutInflater.from(context).
+                                inflate(R.layout.ingredient, parent, false);
+                    }
+
+                    Ingredient currentItem = mIngredients.get(position);
+
+                    TextView ingredientView =
+                            convertView.findViewById(R.id.tv_ingredient);
+                    TextView quantityView =
+                            convertView.findViewById(R.id.tv_quantity);
+                    TextView measureView =
+                            convertView.findViewById(R.id.tv_measure);
+
+                    ingredientView.setText(currentItem.getIngredient());
+                    quantityView.setText(Float.toString(currentItem.getQuantity()));
+                    measureView.setText(currentItem.getMeasure());
+
+                    return convertView;
+                }
+            }
+        }
+
+        class ItemViewHolder extends RecyclerView.ViewHolder {
+            final TextView mStepId;
+            final TextView mStepBrief;
+
+            public void bind(int position) {
+                mStepId.setText(Integer.toString(mSteps.get(position - 1).getId()));
+                Log.d(TAG, "bind: " + Integer.toString(mSteps.get(position - 1).getId()));
+                mStepBrief.setText(mSteps.get(position - 1).getShortDescription());
+                Log.d(TAG, "bind: " + mSteps.get(position - 1).getShortDescription());
+            }
+
+            private ItemViewHolder(View view) {
+                super(view);
+                mStepId = (TextView) view.findViewById(R.id.tv_step_number);
+                mStepBrief = (TextView) view.findViewById(R.id.tv_step_brief);
             }
         }
     }
-
-    class ItemViewHolder extends RecyclerView.ViewHolder {
-        final TextView mStepId;
-        final TextView mStepBrief;
-
-        public void bind(int position) {
-            mStepId.setText(Integer.toString(mSteps.get(position - 1).getId()));
-            Log.d(TAG, "bind: " + Integer.toString(mSteps.get(position - 1).getId()));
-            mStepBrief.setText(mSteps.get(position - 1).getShortDescription());
-            Log.d(TAG, "bind: " + mSteps.get(position - 1).getShortDescription());
-        }
-
-        private ItemViewHolder(View view) {
-            super(view);
-            mStepId = (TextView) view.findViewById(R.id.tv_step_number);
-            mStepBrief = (TextView) view.findViewById(R.id.tv_step_brief);
-        }
-    }
-}
 }
