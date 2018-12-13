@@ -33,13 +33,10 @@ import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
 
 public class PlayerFragment extends Fragment {
 
-    public static final String TAG = PlayerFragment.class.getSimpleName();
-
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
-
-    ImageView mNoVideoPlaceHolder;
+    private ImageView mNoVideoPlaceHolder;
 
     public PlayerFragment(){}
 

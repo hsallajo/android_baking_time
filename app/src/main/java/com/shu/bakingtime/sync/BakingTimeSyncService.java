@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class BakingTimeSyncService extends IntentService {
 
-    public static final String TAG = BakingTimeSyncService.class.getSimpleName();
+    private static final String TAG = BakingTimeSyncService.class.getSimpleName();
 
     public BakingTimeSyncService() {
         super("BakingTimeSyncService");

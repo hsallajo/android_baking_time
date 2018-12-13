@@ -10,7 +10,7 @@ import java.util.List;
 
 public class RecipeTypeConverter {
 
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     @TypeConverter
     public static String fromIngredientList(List<Ingredient> ingredients){

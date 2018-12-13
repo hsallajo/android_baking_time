@@ -22,7 +22,6 @@ public class InstructionsFragment extends Fragment {
     public InstructionsFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +31,7 @@ public class InstructionsFragment extends Fragment {
             mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DATA));
 
             Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
                 appBarLayout.setTitle(mStep.getShortDescription());
             }

@@ -20,7 +20,7 @@ import static com.shu.bakingtime.RecipeActivity.EXTRA_NEXT_PREV_CLICK_EVENT;
 
 public class StepActivity extends AppCompatActivity {
 
-    public static final String TAG = StepActivity.class.getSimpleName();
+    private static final String TAG = StepActivity.class.getSimpleName();
 
     private boolean mIsPreviousStep;
     private boolean mIsNextStep;
@@ -44,7 +44,7 @@ public class StepActivity extends AppCompatActivity {
             }
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.

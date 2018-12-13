@@ -2,9 +2,6 @@ package com.shu.bakingtime.sync;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.shu.bakingtime.R;
 import com.shu.bakingtime.database.RecipeDatabase;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.utilities.NetworkUtils;
@@ -17,7 +14,7 @@ import retrofit2.Response;
 
 public class BakingTimeSyncTask {
 
-    public static final String TAG = BakingTimeSyncTask.class.getSimpleName();
+    private static final String TAG = BakingTimeSyncTask.class.getSimpleName();
 
     synchronized public static void syncRecipes(final Context context){
 

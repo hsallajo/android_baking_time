@@ -31,9 +31,9 @@ import static com.shu.bakingtime.RecipesMainActivity.EXTRA_RECIPE;
 
 public class RecipeActivity extends AppCompatActivity {
 
-    public static final String TAG = RecipeActivity.class.getSimpleName();
-    public static final int TYPE_HEADER = 1;
-    public static final int TYPE_ITEM = 0;
+    private static final String TAG = RecipeActivity.class.getSimpleName();
+    private static final int TYPE_HEADER = 1;
+    private static final int TYPE_ITEM = 0;
     public static final String ARG_STEP_DATA = "step_data";
     public static final String EXTRA_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
     public static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
@@ -59,7 +59,7 @@ public class RecipeActivity extends AppCompatActivity {
             mCurrentStep = 0;
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(mRecipeData.getName());
         setSupportActionBar(toolbar);
 
@@ -91,8 +91,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         Log.d(TAG, "setupRecyclerView: ");
-        mAdapter = new StepsRecyclerViewAdapter(this
-                , mRecipeData.getSteps()
+        mAdapter = new StepsRecyclerViewAdapter(mRecipeData.getSteps()
                 , mTwoPane);
         recyclerView.setAdapter(mAdapter);
 
@@ -234,8 +233,7 @@ public class RecipeActivity extends AppCompatActivity {
             }
         };
 
-        StepsRecyclerViewAdapter(RecipeActivity parent,
-                                 List<Step> steps,
+        StepsRecyclerViewAdapter(List<Step> steps,
                                  boolean twoPane) {
             mSteps = steps;
             mTwoPane = twoPane;
@@ -286,15 +284,9 @@ public class RecipeActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-            Log.d(TAG, "onBindViewHolder: ");
 
-            if (position == 0
-                    && (holder.getItemViewType() == TYPE_HEADER)) {
-
-                HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-                headerViewHolder.bind(position);
-
-            } else {
+            if ((holder.getItemViewType() == TYPE_ITEM)
+                    && position != 0) {
 
                 ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
 
@@ -303,9 +295,13 @@ public class RecipeActivity extends AppCompatActivity {
                 itemViewHolder.itemView.setOnClickListener(mOnClickListener);
 
                 if (mCurrentStep == (position - 1)) {
-                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources(), android.R.color.holo_green_dark, null));
+                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources()
+                            , android.R.color.holo_green_dark
+                            , null));
                 } else {
-                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources(), android.R.color.holo_green_light, null));
+                    itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources()
+                            , android.R.color.holo_green_light
+                            , null));
                 }
             }
         }
@@ -316,9 +312,6 @@ public class RecipeActivity extends AppCompatActivity {
             final ListView mIngredientView;
             final IngredientAdapter mIngredientAdapter;
             final List<Ingredient> mIngredients;
-
-            public void bind(int position) {
-            }
 
             HeaderViewHolder(View view) {
                 super(view);
@@ -351,7 +344,7 @@ public class RecipeActivity extends AppCompatActivity {
             class IngredientAdapter extends BaseAdapter {
 
                 private final List<Ingredient> mIngredients;
-                private Context context;
+                private final Context context;
 
                 public IngredientAdapter(Context context, List<Ingredient> ingredients) {
                     super();

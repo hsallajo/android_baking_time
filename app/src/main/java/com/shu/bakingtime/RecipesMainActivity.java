@@ -28,7 +28,7 @@ import java.util.List;
 
 public class RecipesMainActivity extends AppCompatActivity {
 
-    public static final String TAG = RecipesMainActivity.class.getSimpleName();
+    private static final String TAG = RecipesMainActivity.class.getSimpleName();
     public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
     private RecyclerView mRecycleView;
@@ -41,7 +41,7 @@ public class RecipesMainActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: ");
 
         setContentView(R.layout.activity_recipes_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mRecycleView = (RecyclerView) findViewById(R.id.receipe_list_container);
@@ -136,8 +136,8 @@ public class RecipesMainActivity extends AppCompatActivity {
 
     public static class RecipesRecyclerViewAdapter extends RecyclerView.Adapter<RecipesRecyclerViewAdapter.ViewHolder> {
 
-        List<Recipe> mData;
-        RecipesMainActivity mListener;
+        final List<Recipe> mData;
+        final RecipesMainActivity mListener;
 
         public RecipesRecyclerViewAdapter(RecipesMainActivity parent, List<Recipe> data) {
             mData = data;
