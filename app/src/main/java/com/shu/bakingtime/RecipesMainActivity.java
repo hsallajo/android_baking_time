@@ -31,7 +31,6 @@ public class RecipesMainActivity extends AppCompatActivity {
     private static final String TAG = RecipesMainActivity.class.getSimpleName();
     public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
-    private RecyclerView mRecycleView;
     private RecipesRecyclerViewAdapter mRecipesAdapter;
     private RecipesViewModel mModel;
 
@@ -44,7 +43,7 @@ public class RecipesMainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mRecycleView = findViewById(R.id.recipe_list_container);
+        RecyclerView mRecycleView = findViewById(R.id.recipe_list_container);
         mRecycleView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.columns)));
 
         final List<Recipe> recipeList = new ArrayList<>();
@@ -105,7 +104,7 @@ public class RecipesMainActivity extends AppCompatActivity {
 
         Toast.makeText(this, "clicked " + position, Toast.LENGTH_SHORT).show();
         createStepsActivity(position);
-    };
+    }
 
     private void createStepsActivity(int position){
         Intent i = new Intent(this, RecipeActivity.class);
@@ -175,8 +174,8 @@ public class RecipesMainActivity extends AppCompatActivity {
 
             ViewHolder(View view) {
                 super(view);
-                mAdditionalInfoView = (TextView) view.findViewById(R.id.tv_recipe_servings);
-                mContentView = (TextView) view.findViewById(R.id.tv_recipe_name);
+                mAdditionalInfoView = view.findViewById(R.id.tv_recipe_servings);
+                mContentView = view.findViewById(R.id.tv_recipe_name);
 
                 view.setOnClickListener(this);
             }
@@ -184,7 +183,7 @@ public class RecipesMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mListener.onRecipesAdapterViewHolderClick(getAdapterPosition());
-            };
+            }
         }
     }
 }

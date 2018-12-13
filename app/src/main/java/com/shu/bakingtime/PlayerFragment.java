@@ -36,7 +36,6 @@ public class PlayerFragment extends Fragment {
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
-    private ImageView mNoVideoPlaceHolder;
 
     public PlayerFragment(){}
 
@@ -84,13 +83,13 @@ public class PlayerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.player, container, false);
-        mNoVideoPlaceHolder = rootView.findViewById(R.id.no_video_placeholder);
+        ImageView mNoVideoPlaceHolder = rootView.findViewById(R.id.no_video_placeholder);
 
         if(mStep != null){
             mPlayerView = rootView.findViewById(R.id.playerView);
         }
 
-        Uri u = null;
+        Uri u;
         if(!TextUtils.isEmpty(mStep.getVideoURL())){
 
             mNoVideoPlaceHolder.setVisibility(View.INVISIBLE);

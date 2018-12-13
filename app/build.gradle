@@ -21,6 +21,12 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+
+
+    lintOptions {
+        checkDependencies true
+    }
+
 }
 
 dependencies {
@@ -48,8 +54,8 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.9.2'
 
     /*implementation 'com.squareup.picasso:picasso:2.71828'*/
-    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 
     implementation 'org.parceler:parceler-api:1.1.11'
     annotationProcessor 'org.parceler:parceler:1.1.11'

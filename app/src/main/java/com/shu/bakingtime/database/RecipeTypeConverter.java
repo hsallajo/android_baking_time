@@ -17,8 +17,7 @@ public class RecipeTypeConverter {
         if(ingredients == null)
             return null;
         Type type = new TypeToken<List<Ingredient>>(){}.getType();
-        String json = gson.toJson(ingredients, type);
-        return json;
+        return gson.toJson(ingredients, type);
     }
 
     @TypeConverter
@@ -26,8 +25,7 @@ public class RecipeTypeConverter {
         if(ingredients == null)
             return null;
         Type type = new TypeToken<List<Ingredient>>(){}.getType();
-        List<Ingredient> ingredientList = gson.fromJson(ingredients, type);
-        return ingredientList;
+        return gson.fromJson(ingredients, type);
     }
 
     @TypeConverter
@@ -35,8 +33,7 @@ public class RecipeTypeConverter {
         if(steps == null)
             return null;
         Type type = new TypeToken<List<Step>>(){}.getType();
-        String json = gson.toJson(steps, type);
-        return json;
+        return gson.toJson(steps, type);
     }
 
     @TypeConverter
@@ -44,7 +41,6 @@ public class RecipeTypeConverter {
         if(steps == null)
             return null;
         Type type = new TypeToken<List<Step>>(){}.getType();
-        List<Step> stepsList = gson.fromJson(steps, type);
-        return stepsList;
+        return gson.fromJson(steps, type);
     }
 }

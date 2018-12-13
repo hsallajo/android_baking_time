@@ -41,7 +41,6 @@ public class RecipeActivity extends AppCompatActivity {
     public static final String EXTRA_IS_PREV_STEP = "EXTRA_IS_PREV_STEP";
 
     private boolean mTwoPane;
-    private StepsRecyclerViewAdapter mAdapter;
     private Recipe mRecipeData;
     private int mCurrentStep;
 
@@ -91,7 +90,7 @@ public class RecipeActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         Log.d(TAG, "setupRecyclerView: ");
-        mAdapter = new StepsRecyclerViewAdapter(mRecipeData.getSteps()
+        StepsRecyclerViewAdapter mAdapter = new StepsRecyclerViewAdapter(mRecipeData.getSteps()
                 , mTwoPane);
         recyclerView.setAdapter(mAdapter);
 
@@ -199,11 +198,11 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private boolean isPreviousStep() {
-        return mCurrentStep > 0 ? true : false;
+        return mCurrentStep > 0;
     }
 
     private boolean isNextStep() {
-        return mCurrentStep < (mRecipeData.getSteps().size() - 1) ? true : false;
+        return mCurrentStep < (mRecipeData.getSteps().size() - 1);
     }
 
     class StepsRecyclerViewAdapter
@@ -344,7 +343,7 @@ public class RecipeActivity extends AppCompatActivity {
                 private final List<Ingredient> mIngredients;
                 private final Context context;
 
-                public IngredientAdapter(Context context, List<Ingredient> ingredients) {
+                IngredientAdapter(Context context, List<Ingredient> ingredients) {
                     super();
                     this.mIngredients = ingredients;
                     this.context = context;
@@ -404,7 +403,7 @@ public class RecipeActivity extends AppCompatActivity {
 
             private ItemViewHolder(View view) {
                 super(view);
-                mStepId = (TextView) view.findViewById(R.id.tv_step_number);
+                mStepId = view.findViewById(R.id.tv_step_number);
                 mStepBrief = (TextView) view.findViewById(R.id.tv_step_brief);
             }
         }

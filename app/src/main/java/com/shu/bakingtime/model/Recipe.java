@@ -33,7 +33,7 @@ public class Recipe {
     @SerializedName("steps")
     @Expose
     @TypeConverters(RecipeTypeConverter.class)
-    private List<Step> steps = null;
+    private List<Step> steps;
     @SerializedName("servings")
     @Expose
     private Integer servings;
