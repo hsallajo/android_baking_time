@@ -2,8 +2,8 @@
     <string name="app_name">BakingTime</string>
     <string name="action_refresh">Refresh</string>
     <string name="msg_no_network">No network</string>
-    <string name="title_recipestep_list">RecipeSteps</string>
-    <string name="title_recipestep_detail">RecipeStep Detail</string>
+    <string name="title_recipe_step_list">RecipeSteps</string>
+    <string name="title_recipe_step_detail">RecipeStep Detail</string>
     <string name="str_player_previous_button">Player previous button</string>
     <string name="str_player_repeat_button">Player repeat button</string>
     <string name="str_player_play_button">Player play button</string>

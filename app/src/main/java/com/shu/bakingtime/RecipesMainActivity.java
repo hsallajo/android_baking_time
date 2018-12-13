@@ -44,7 +44,7 @@ public class RecipesMainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mRecycleView = (RecyclerView) findViewById(R.id.receipe_list_container);
+        mRecycleView = findViewById(R.id.recipe_list_container);
         mRecycleView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.columns)));
 
         final List<Recipe> recipeList = new ArrayList<>();
@@ -139,7 +139,7 @@ public class RecipesMainActivity extends AppCompatActivity {
         final List<Recipe> mData;
         final RecipesMainActivity mListener;
 
-        public RecipesRecyclerViewAdapter(RecipesMainActivity parent, List<Recipe> data) {
+        RecipesRecyclerViewAdapter(RecipesMainActivity parent, List<Recipe> data) {
             mData = data;
             mListener = parent;
         }
@@ -163,7 +163,7 @@ public class RecipesMainActivity extends AppCompatActivity {
             return mData.size();
         }
 
-        public void refreshData(List<com.shu.bakingtime.model.Recipe> data){
+        void refreshData(List<com.shu.bakingtime.model.Recipe> data){
             mData.clear();
             mData.addAll(data);
             notifyDataSetChanged();

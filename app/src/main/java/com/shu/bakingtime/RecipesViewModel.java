@@ -17,7 +17,7 @@ public class RecipesViewModel extends AndroidViewModel {
     private final LiveData<List<Recipe>> mRecipeList;
     private final RecipeDatabase mDatabase;
 
-    private Context context;
+    private final Context context;
 
     public RecipesViewModel(@NonNull Application application) {
         super(application);

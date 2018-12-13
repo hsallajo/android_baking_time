@@ -55,7 +55,7 @@ public class StepActivity extends AppCompatActivity {
 
         View v = getWindow().getDecorView();
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            v.setSystemUiVisibility(v.SYSTEM_UI_FLAG_FULLSCREEN);
+            v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         } else {
             v.setSystemUiVisibility(0);
         }

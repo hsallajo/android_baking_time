@@ -36,7 +36,7 @@ public class RecipeActivity extends AppCompatActivity {
     private static final int TYPE_ITEM = 0;
     public static final String ARG_STEP_DATA = "step_data";
     public static final String EXTRA_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
-    public static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
+    private static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
     public static final String EXTRA_IS_NEXT_STEP = "EXTRA_IS_NEXT_STEP";
     public static final String EXTRA_IS_PREV_STEP = "EXTRA_IS_PREV_STEP";
 
@@ -143,11 +143,9 @@ public class RecipeActivity extends AppCompatActivity {
 
                 if (click_event == 2) {
                     previousStep();
-                    return;
                 }
                 if (click_event == 3) {
                     nextStep();
-                    return;
                 }
             }
         }
@@ -159,7 +157,7 @@ public class RecipeActivity extends AppCompatActivity {
         intent.putExtra(ARG_STEP_DATA, Parcels.wrap(data));
         intent.putExtra(EXTRA_IS_NEXT_STEP, isNextStep());
         intent.putExtra(EXTRA_IS_PREV_STEP, isPreviousStep());
-        startActivityForResult(intent, 66);
+        startActivityForResult(intent, STEP_ACTIVITY_REQUEST_RESULT);
 
     }
 
@@ -208,7 +206,7 @@ public class RecipeActivity extends AppCompatActivity {
         return mCurrentStep < (mRecipeData.getSteps().size() - 1) ? true : false;
     }
 
-    public class StepsRecyclerViewAdapter
+    class StepsRecyclerViewAdapter
             extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final List<Step> mSteps;
@@ -315,7 +313,7 @@ public class RecipeActivity extends AppCompatActivity {
 
             HeaderViewHolder(View view) {
                 super(view);
-                mIngredientView = (ListView) view.findViewById(R.id.lv_ingredients);
+                mIngredientView = view.findViewById(R.id.lv_ingredients);
                 mIngredients = mRecipeData.getIngredients();
                 mIngredientAdapter = new IngredientAdapter(getApplicationContext(), mIngredients);
                 mIngredientView.setAdapter(mIngredientAdapter);

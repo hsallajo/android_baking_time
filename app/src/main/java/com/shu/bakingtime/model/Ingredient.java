@@ -25,30 +25,16 @@ public class Ingredient
         return quantity;
     }
 
-/*    @ParcelProperty("quantity")
-    public void setQuantity(Float quantity) {
-        this.quantity = quantity;
-    }*/
-
     @ParcelProperty("measure")
     public String getMeasure() {
         return measure;
     }
-
-/*    @ParcelProperty("measure")
-    public void setMeasure(String measure) {
-        this.measure = measure;
-    }*/
 
     @ParcelProperty("ingredient")
     public String getIngredient() {
         return ingredient;
     }
 
-/*    @ParcelProperty("ingredient")
-    public void setIngredient(String ingredient) {
-        this.ingredient = ingredient;
-    }*/
 
 }
 

@@ -74,60 +74,34 @@ public class Recipe {
         return id;
     }
 
-/*    @ParcelProperty("id")
-    public void setId(Integer id) {
-        this.id = id;
-    }*/
-
     @ParcelProperty("name")
     public String getName() {
         return name;
     }
 
-/*    @ParcelProperty("name")
-    public void setName(String name) {
-        this.name = name;
-    }*/
 
     @ParcelProperty("ingredients")
     public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-/*    @ParcelProperty("ingredients")
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }*/
 
     @ParcelProperty("steps")
     public List<Step> getSteps() {
         return steps;
     }
 
-/*    @ParcelProperty("steps")
-    public void setSteps(List<Step> steps) {
-        this.steps = steps;
-    }*/
-
     @ParcelProperty("servings")
     public Integer getServings() {
         return servings;
     }
 
- /*   @ParcelProperty("servings")
-    public void setServings(Integer servings) {
-        this.servings = servings;
-    }*/
 
     @ParcelProperty("image")
     public String getImage() {
         return image;
     }
 
-/*    @ParcelProperty("image")
-    public void setImage(String image) {
-        this.image = image;
-    }*/
 
 }
 

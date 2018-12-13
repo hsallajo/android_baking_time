@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingStart="@dimen/margin_medium"
-    android:paddingTop="@dimen/margin_xsmall"
+    android:paddingTop="@dimen/margin_x_small"
     android:paddingEnd="@dimen/margin_medium"
-    android:paddingBottom="@dimen/margin_xsmall">
+    android:paddingBottom="@dimen/margin_x_small">
 
     <TextView
         android:id="@+id/tv_ingredient"
