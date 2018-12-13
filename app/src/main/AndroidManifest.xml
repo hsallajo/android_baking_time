@@ -40,9 +40,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.shu.bakingtime.RecipeActivity" />
         </activity>
+
         <service
             android:name=".sync.BakingTimeSyncService"
-            android:exported="false"/>
+            android:exported="false">
+        </service>
+
+        <service
+            android:name=".sync.RecipeSyncService">
+        </service>
+
+        <receiver android:name=".BakingTimeWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/baking_time_widget_info" />
+        </receiver>
     </application>
 
 </manifest>

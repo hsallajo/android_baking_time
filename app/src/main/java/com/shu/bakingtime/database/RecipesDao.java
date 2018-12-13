@@ -17,4 +17,7 @@ public interface RecipesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Recipe recipe);
+
+    @Query("SELECT * FROM recipe WHERE id = :recipeId")
+    Recipe loadRecipe(int recipeId);
 }

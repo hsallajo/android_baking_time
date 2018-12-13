@@ -396,9 +396,7 @@ public class RecipeActivity extends AppCompatActivity {
 
             public void bind(int position) {
                 mStepId.setText(Integer.toString(mSteps.get(position - 1).getId()));
-                Log.d(TAG, "bind: " + Integer.toString(mSteps.get(position - 1).getId()));
                 mStepBrief.setText(mSteps.get(position - 1).getShortDescription());
-                Log.d(TAG, "bind: " + mSteps.get(position - 1).getShortDescription());
             }
 
             private ItemViewHolder(View view) {
