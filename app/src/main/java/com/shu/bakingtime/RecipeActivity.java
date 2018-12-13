@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -35,6 +34,7 @@ public class RecipeActivity extends AppCompatActivity {
     public static final String TAG = RecipeActivity.class.getSimpleName();
     public static final int TYPE_HEADER = 1;
     public static final int TYPE_ITEM = 0;
+    public static final String ARG_STEP_DATA = "step_data";
     public static final String EXTRA_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
     public static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
     public static final String EXTRA_IS_NEXT_STEP = "EXTRA_IS_NEXT_STEP";
@@ -69,7 +69,7 @@ public class RecipeActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if (findViewById(R.id.step_container) != null) {
+        if (findViewById(R.id.instructions_fragment_container) != null) {
             mTwoPane = true;
         }
 
@@ -157,7 +157,7 @@ public class RecipeActivity extends AppCompatActivity {
     private void setupStepActivity(Step data) {
 
         Intent intent = new Intent(this, StepActivity.class);
-        intent.putExtra(StepFragment.ARG_STEP_DETAIL, Parcels.wrap(data));
+        intent.putExtra(ARG_STEP_DATA, Parcels.wrap(data));
         intent.putExtra(EXTRA_IS_NEXT_STEP, isNextStep());
         intent.putExtra(EXTRA_IS_PREV_STEP, isPreviousStep());
         startActivityForResult(intent, 66);
@@ -167,14 +167,14 @@ public class RecipeActivity extends AppCompatActivity {
     private void setupStepFragments(Step data) {
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable(StepFragment.ARG_STEP_DETAIL, Parcels.wrap(data));
+        arguments.putParcelable(ARG_STEP_DATA, Parcels.wrap(data));
         arguments.putBoolean(EXTRA_IS_NEXT_STEP, isNextStep());
         arguments.putBoolean(EXTRA_IS_PREV_STEP, isPreviousStep());
 
-        StepFragment fragment = new StepFragment();
+        InstructionsFragment fragment = new InstructionsFragment();
         fragment.setArguments(arguments);
         this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.step_container, fragment)
+                .replace(R.id.instructions_fragment_container, fragment)
                 .commit();
 
 

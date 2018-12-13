@@ -4,4 +4,12 @@
     <string name="msg_no_network">No network</string>
     <string name="title_recipestep_list">RecipeSteps</string>
     <string name="title_recipestep_detail">RecipeStep Detail</string>
+    <string name="str_player_previous_button">Player previous button</string>
+    <string name="str_player_repeat_button">Player repeat button</string>
+    <string name="str_player_play_button">Player play button</string>
+    <string name="str_player_pause_button">Player pause button</string>
+    <string name="str_prev">Previous</string>
+    <string name="str_next">Next</string>
+    <string name="str_placeholder">Placeholder image displayed when recipe step video is missing</string>
+    <string name="str_recipe_image">Decorative recipe image</string>
 </resources>

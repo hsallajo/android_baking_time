@@ -10,8 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
+import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
 import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_NEXT_STEP;
 import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_PREV_STEP;
 import static com.shu.bakingtime.RecipeActivity.EXTRA_NEXT_PREV_CLICK_EVENT;
@@ -61,15 +61,17 @@ public class StepActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
 
             Bundle arguments = new Bundle();
-            arguments.putParcelable(StepFragment.ARG_STEP_DETAIL,
-                    getIntent().getParcelableExtra(StepFragment.ARG_STEP_DETAIL));
+            arguments.putParcelable(ARG_STEP_DATA,
+                    getIntent().getParcelableExtra(ARG_STEP_DATA));
 
             if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-                StepFragment fragment = new StepFragment();
+                InstructionsFragment fragment = new InstructionsFragment();
                 fragment.setArguments(arguments);
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.step_container, fragment)
+                        .add(R.id.instructions_fragment_container, fragment)
                         .commit();
+
+                setupBottomNavigationButtons();
             }
 
             PlayerFragment playerFragment = new PlayerFragment();
@@ -79,12 +81,13 @@ public class StepActivity extends AppCompatActivity {
                     .commit();
         }
 
+    }
+
+    private void setupBottomNavigationButtons() {
         Button prev = findViewById(R.id.step_btn_prev);
         prev.setClickable(mIsPreviousStep);
-        //prev.setClickable(true);
         Button next = findViewById(R.id.step_btn_next);
         next.setClickable(mIsNextStep);
-
     }
 
     @Override

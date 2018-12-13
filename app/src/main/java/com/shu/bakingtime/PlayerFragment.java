@@ -29,9 +29,10 @@ import com.shu.bakingtime.model.Step;
 
 import org.parceler.Parcels;
 
+import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
+
 public class PlayerFragment extends Fragment {
 
-    public static final String ARG_STEP_DETAIL = "item_id";
     public static final String TAG = PlayerFragment.class.getSimpleName();
 
     private Step mStep;
@@ -46,8 +47,8 @@ public class PlayerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_STEP_DETAIL)) {
-            mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DETAIL));
+        if (getArguments().containsKey(ARG_STEP_DATA)) {
+            mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DATA));
         }
 
     }

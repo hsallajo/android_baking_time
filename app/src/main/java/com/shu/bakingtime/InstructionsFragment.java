@@ -13,13 +13,13 @@ import com.shu.bakingtime.model.Step;
 
 import org.parceler.Parcels;
 
-public class StepFragment extends Fragment {
+import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
 
-    public static final String ARG_STEP_DETAIL = "item_id";
+public class InstructionsFragment extends Fragment {
 
     private Step mStep;
 
-    public StepFragment() {
+    public InstructionsFragment() {
     }
 
 
@@ -27,9 +27,9 @@ public class StepFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_STEP_DETAIL)) {
+        if (getArguments().containsKey(ARG_STEP_DATA)) {
 
-            mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DETAIL));
+            mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DATA));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
