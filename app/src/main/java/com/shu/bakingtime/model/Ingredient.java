@@ -35,6 +35,21 @@ public class Ingredient
         return ingredient;
     }
 
+    @ParcelProperty("quantity")
+    public void setQuantity(Float quantity) {
+        this.quantity = quantity;
+    }
+
+    @ParcelProperty("measure")
+    public void setMeasure(String measure) {
+        this.measure = measure;
+    }
+
+    @ParcelProperty("ingredient")
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
+    }
+
 
 }
 

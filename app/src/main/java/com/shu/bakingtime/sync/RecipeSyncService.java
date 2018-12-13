@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import com.shu.bakingtime.BakingTimeWidget;
+import com.shu.bakingtime.widget.BakingTimeWidget;
 import com.shu.bakingtime.database.RecipeDatabase;
 import com.shu.bakingtime.model.Recipe;
 import static com.shu.bakingtime.RecipesMainActivity.KEY_BAKING_TIME_LAST_RECIPE_ID;
@@ -40,12 +40,12 @@ public class RecipeSyncService extends IntentService {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingTimeWidget.class));
         Recipe recipe = getLastRecipeIngredients();
-        BakingTimeWidget.updateRecipeWidget(this, appWidgetManager, recipe.getIngredients(), recipe.getName(), appWidgetIds);
+        BakingTimeWidget.updateRecipeWidget(this, appWidgetManager, recipe, appWidgetIds);
 
     }
 
     private Recipe getLastRecipeIngredients(){
-        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREF_BAKING_TIME, this.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREF_BAKING_TIME, Context.MODE_PRIVATE);
         int recipeId = sharedPreferences.getInt(KEY_BAKING_TIME_LAST_RECIPE_ID, 0);
         int recipeCnt = sharedPreferences.getInt(KEY_BAKING_TIME_RECIPES_CNT, 0);
 
@@ -58,7 +58,6 @@ public class RecipeSyncService extends IntentService {
     private Recipe requestRecipe(int recipeId) {
 
         final RecipeDatabase db = RecipeDatabase.getInstance(this);
-        Recipe recipe = db.recipesDao().loadRecipe(recipeId + 1 );
-        return recipe;
+        return db.recipesDao().loadRecipe(recipeId + 1 );
     }
 }

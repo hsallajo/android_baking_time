@@ -1,26 +1,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/baking_time_widget_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#09C"
-    android:padding="@dimen/widget_margin">
-
-    <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="#000"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
-    <ImageView
-        android:id="@+id/appwidget_img"
+    android:orientation="vertical">
+    <Button
+        android:id="@+id/tv_widget_recipe"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/widget_header_height"
+        android:padding="@dimen/margin_small"
+        android:paddingBottom="@dimen/margin_medium"
+        android:paddingTop="@dimen/margin_medium"
+        android:background="@color/colorPrimary"
+        android:text="@string/str_widget_recipe_name_place_holder"
+        android:textSize="@dimen/widget_header_text_size"
+        android:drawableEnd="@drawable/icon_resize_layer"
+        android:textColor="@android:color/white"
+        />
+    <ListView
+        android:divider="@color/grey_dark"
+        android:id="@+id/widget_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:src="@drawable/ic_sauce_pan"/>
+        android:background="@color/colorPrimary_w_transparency">
+    </ListView>
 
 </LinearLayout>

@@ -14,4 +14,7 @@
     <string name="str_recipe_image">Decorative recipe image</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="str_widget_recipe_name_place_holder">Recipe name</string>
+    <string name="str_widget_quantity_placeholder">200g</string>
+    <string name="str_widget_recipe_place_holder">Nutella or other chocolate-hazelnut spread</string>
 </resources>
