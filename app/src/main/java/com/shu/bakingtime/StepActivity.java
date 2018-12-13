@@ -2,7 +2,9 @@ package com.shu.bakingtime;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.support.v7.app.AppCompatActivity;
@@ -85,9 +87,32 @@ public class StepActivity extends AppCompatActivity {
 
     private void setupBottomNavigationButtons() {
         Button prev = findViewById(R.id.step_btn_prev);
-        prev.setClickable(mIsPreviousStep);
+        Drawable drawablePrev = getResources().getDrawable(R.drawable.ic_chevron_left_black_24dp);
+        drawablePrev = DrawableCompat.wrap(drawablePrev);
+
+        if(!mIsPreviousStep){
+            DrawableCompat.setTint(drawablePrev, getResources().getColor(R.color.grey_light));
+            prev.setAlpha(.5f);
+        } else {
+            DrawableCompat.setTint(drawablePrev, getResources().getColor(android.R.color.black));
+            prev.setAlpha(1.0f);
+        }
+        prev.setCompoundDrawablesWithIntrinsicBounds(drawablePrev, null, null, null);
+        prev.setEnabled(mIsPreviousStep);
+
         Button next = findViewById(R.id.step_btn_next);
-        next.setClickable(mIsNextStep);
+        Drawable drawableNext = getResources().getDrawable(R.drawable.ic_chevron_right_black_24dp);
+        drawableNext = DrawableCompat.wrap(drawableNext);
+
+        if(!mIsNextStep){
+            DrawableCompat.setTint(drawableNext, getResources().getColor(R.color.grey_light));
+            next.setAlpha(.5f);
+        } else {
+            DrawableCompat.setTint(drawableNext, getResources().getColor(android.R.color.black));
+            next.setAlpha(1.0f);
+        }
+        next.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableNext, null);
+        next.setEnabled(mIsNextStep);
     }
 
     @Override
