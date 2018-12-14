@@ -15,7 +15,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="StepToolbarTheme" parent="AppTheme.AppBarOverlay">
+    </style>
+
+    <style name="BakingTitleTextAppearance" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textSize">30dp</item>
+    </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

@@ -62,12 +62,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/step_top_row">
 
-            <!-- Only in two-pane layout -->
             <FrameLayout
                 android:id="@+id/instructions_fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="InconsistentLayout"/>
+
         </android.support.v7.widget.CardView>
 
     </android.support.constraint.ConstraintLayout>
