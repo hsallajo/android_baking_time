@@ -24,6 +24,7 @@ import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.sync.RecipeSyncService;
 import com.shu.bakingtime.utilities.UIUtils;
 import com.shu.bakingtime.utilities.jsonUtil;
+import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
@@ -61,10 +62,10 @@ public class RecipesMainActivity extends AppCompatActivity {
         mModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
-                if(recipes == null || recipes.size() == 0){
+                if (recipes == null || recipes.size() == 0) {
                     Log.i(TAG, "no recipes found. Starting db sync.");
-                    mModel.loadRecipes();}
-                 else
+                    mModel.loadRecipes();
+                } else
                     mRecipesAdapter.refreshData(recipes);
             }
         });
@@ -107,7 +108,7 @@ public class RecipesMainActivity extends AppCompatActivity {
         Log.d(TAG, "onRestart: ");
     }
 
-    private void onRecipesAdapterViewHolderClick(int position){
+    private void onRecipesAdapterViewHolderClick(int position) {
 
         updateLastRecipe(position);
         createStepsActivity(position);
@@ -125,7 +126,7 @@ public class RecipesMainActivity extends AppCompatActivity {
 
     }
 
-    private void createStepsActivity(int position){
+    private void createStepsActivity(int position) {
         Intent i = new Intent(this, RecipeActivity.class);
         i.putExtra(EXTRA_RECIPE, Parcels.wrap(mRecipesAdapter.mData.get(position)));
         startActivity(i);
@@ -172,10 +173,18 @@ public class RecipesMainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+
             viewHolder.mContentView.setText(mData.get(i).getName());
-            viewHolder.mAdditionalInfoView.setText("Servings: " + mData.get(i).getServings());
-            viewHolder.mImage.setImageDrawable(UIUtils.createInitialLetterDrawable(
-                    UIUtils.getFirstLetter(mData.get(i).getName()), mListener.getApplicationContext()));
+            viewHolder.mAdditionalInfoView.setText(mListener.getString(R.string.str_service) + mData.get(i).getServings());
+            
+            if (mData.get(i).getImage() == null || mData.get(i).getImage().equals("")) {
+                
+                viewHolder.mImage.setImageDrawable(UIUtils.createInitialLetterDrawable(
+                        UIUtils.getFirstLetter(mData.get(i).getName()), mListener.getApplicationContext()));
+                
+            } else {
+                Picasso.get().load(mData.get(i).getImage()).centerCrop().fit().into(viewHolder.mImage);
+            }
         }
 
         @Override
@@ -183,13 +192,13 @@ public class RecipesMainActivity extends AppCompatActivity {
             return mData.size();
         }
 
-        void refreshData(List<com.shu.bakingtime.model.Recipe> data){
+        void refreshData(List<com.shu.bakingtime.model.Recipe> data) {
             mData.clear();
             mData.addAll(data);
             notifyDataSetChanged();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             final TextView mAdditionalInfoView;
             final TextView mContentView;
             final ImageView mImage;
