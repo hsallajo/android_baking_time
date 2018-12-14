@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#8BC34A</color>
+    <color name="colorPrimaryDark">#689F38</color>
+    <color name="colorPrimaryLight">#DCEDC8</color>
+    <color name="colorAccent">#536DFE</color>
     <color name="colorBackground">@android:color/holo_green_light</color>
-    <color name="grey_dark">#8A000000</color>
+    <color name="grey_dark">#757575</color>
+    <color name="primaryText">#212121</color>
+    <color name="secondaryText">#757575</color>
+    <color name="primaryIcons">#212121</color>
+    <color name="divider">#BDBDBD</color>
     <color name="grey_light">#22000000</color>
     <color name="black_w_transparency">#DE000000</color>
     <color name="colorPrimary_w_transparency">#80008577</color>
