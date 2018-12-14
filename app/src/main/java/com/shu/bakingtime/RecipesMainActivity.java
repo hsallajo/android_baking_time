@@ -17,10 +17,12 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.sync.RecipeSyncService;
+import com.shu.bakingtime.utilities.UIUtils;
 import com.shu.bakingtime.utilities.jsonUtil;
 
 import org.parceler.Parcels;
@@ -172,6 +174,8 @@ public class RecipesMainActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
             viewHolder.mContentView.setText(mData.get(i).getName());
             viewHolder.mAdditionalInfoView.setText("Servings: " + mData.get(i).getServings());
+            viewHolder.mImage.setImageDrawable(UIUtils.createInitialLetterDrawable(
+                    UIUtils.getFirstLetter(mData.get(i).getName()), mListener.getApplicationContext()));
         }
 
         @Override
@@ -188,11 +192,13 @@ public class RecipesMainActivity extends AppCompatActivity {
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             final TextView mAdditionalInfoView;
             final TextView mContentView;
+            final ImageView mImage;
 
             ViewHolder(View view) {
                 super(view);
                 mAdditionalInfoView = view.findViewById(R.id.tv_recipe_servings);
                 mContentView = view.findViewById(R.id.tv_recipe_name);
+                mImage = (ImageView) view.findViewById(R.id.recipe_image);
 
                 view.setOnClickListener(this);
             }
@@ -202,5 +208,6 @@ public class RecipesMainActivity extends AppCompatActivity {
                 mListener.onRecipesAdapterViewHolderClick(getAdapterPosition());
             }
         }
+
     }
 }
