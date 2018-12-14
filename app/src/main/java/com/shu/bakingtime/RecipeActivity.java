@@ -54,12 +54,14 @@ public class RecipeActivity extends AppCompatActivity {
         if (getIntent().hasExtra(EXTRA_RECIPE)) {
             Parcelable p = getIntent().getParcelableExtra(EXTRA_RECIPE);
             mRecipeData = Parcels.unwrap(p);
+            Log.d(TAG, "onCreate: recipe data" + mRecipeData);
 
             mCurrentStep = 0;
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(mRecipeData.getName());
+        if(mRecipeData != null)
+            toolbar.setTitle(mRecipeData.getName());
         setSupportActionBar(toolbar);
 
         // Show the Up button in the action bar.
@@ -89,7 +91,6 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        Log.d(TAG, "setupRecyclerView: ");
         StepsRecyclerViewAdapter mAdapter = new StepsRecyclerViewAdapter(mRecipeData.getSteps()
                 , mTwoPane);
         recyclerView.setAdapter(mAdapter);
