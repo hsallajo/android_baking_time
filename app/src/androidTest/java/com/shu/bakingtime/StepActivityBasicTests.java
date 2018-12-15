@@ -7,7 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.shu.bakingtime.model.Ingredient;
-import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.model.Step;
 
 import org.junit.Rule;
@@ -20,15 +19,12 @@ import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
+import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
 import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_NEXT_STEP;
 import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_PREV_STEP;
 import static org.hamcrest.CoreMatchers.is;
@@ -66,7 +62,7 @@ public class StepActivityBasicTests {
 
     private Intent initializeMockIntent(){
         Intent i = new Intent();
-        i.putExtra(ARG_STEP_DATA, Parcels.wrap(mockStep()));
+        i.putExtra(EXT_STEP_DATA, Parcels.wrap(mockStep()));
         i.putExtra(EXTRA_IS_NEXT_STEP, true);
         i.putExtra(EXTRA_IS_PREV_STEP, true);
         return i;

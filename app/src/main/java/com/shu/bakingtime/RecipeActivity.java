@@ -34,7 +34,7 @@ public class RecipeActivity extends AppCompatActivity {
     private static final String TAG = RecipeActivity.class.getSimpleName();
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_ITEM = 0;
-    public static final String ARG_STEP_DATA = "step_data";
+    public static final String EXT_STEP_DATA = "step_data";
     public static final String EXTRA_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
     private static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
     public static final String EXTRA_IS_NEXT_STEP = "EXTRA_IS_NEXT_STEP";
@@ -154,7 +154,7 @@ public class RecipeActivity extends AppCompatActivity {
     private void setupStepActivity(Step data) {
 
         Intent intent = new Intent(this, StepActivity.class);
-        intent.putExtra(ARG_STEP_DATA, Parcels.wrap(data));
+        intent.putExtra(EXT_STEP_DATA, Parcels.wrap(data));
         intent.putExtra(EXTRA_IS_NEXT_STEP, isNextStep());
         intent.putExtra(EXTRA_IS_PREV_STEP, isPreviousStep());
         startActivityForResult(intent, STEP_ACTIVITY_REQUEST_RESULT);
@@ -164,7 +164,7 @@ public class RecipeActivity extends AppCompatActivity {
     private void setupStepFragments(Step data) {
 
         Bundle arguments = new Bundle();
-        arguments.putParcelable(ARG_STEP_DATA, Parcels.wrap(data));
+        arguments.putParcelable(EXT_STEP_DATA, Parcels.wrap(data));
         arguments.putBoolean(EXTRA_IS_NEXT_STEP, isNextStep());
         arguments.putBoolean(EXTRA_IS_PREV_STEP, isPreviousStep());
 

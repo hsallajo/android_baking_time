@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,29 +30,37 @@ import com.shu.bakingtime.model.Step;
 
 import org.parceler.Parcels;
 
-import static com.shu.bakingtime.RecipeActivity.ARG_STEP_DATA;
+import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
 
 public class PlayerFragment extends Fragment {
 
+    public static final String PLAYER_CURRENT_POSITION = "PLAYER_CURRENT_POSITION";
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
+    private ImageView mNoVideoPlaceHolder;
+    private long mPlayerCurrentPosition;
 
-    public PlayerFragment(){}
+    public PlayerFragment() {
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_STEP_DATA)) {
-            mStep = Parcels.unwrap(getArguments().getParcelable(ARG_STEP_DATA));
+        if (getArguments().containsKey(EXT_STEP_DATA)) {
+            mStep = Parcels.unwrap(getArguments().getParcelable(EXT_STEP_DATA));
         }
 
+        if (savedInstanceState != null) {
+            mPlayerCurrentPosition = savedInstanceState.getLong(PLAYER_CURRENT_POSITION);
+        } else
+            mPlayerCurrentPosition = C.TIME_UNSET;
     }
 
     private void initializePlayer(Uri uri) {
 
-        if(mExoPlayer == null){
+        if (mExoPlayer == null) {
 
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
@@ -65,13 +74,20 @@ public class PlayerFragment extends Fragment {
             mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             mExoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
 
+            if (mPlayerCurrentPosition != C.TIME_UNSET) {
+                Log.d("exo", "initializePlayer: current position " + mPlayerCurrentPosition );
+                mExoPlayer.seekTo(mPlayerCurrentPosition);
+            }
             mExoPlayer.prepare(source);
-
             mExoPlayer.setPlayWhenReady(true);
         }
     }
-    private void releasePlayer(){
-        if(mExoPlayer != null){
+
+    private void releasePlayer() {
+        if (mExoPlayer != null) {
+            mPlayerCurrentPosition = mExoPlayer.getCurrentPosition();
+            Log.d("exo", "releasing, position now: " + mPlayerCurrentPosition);
+
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
@@ -83,29 +99,52 @@ public class PlayerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.player, container, false);
-        ImageView mNoVideoPlaceHolder = rootView.findViewById(R.id.no_video_placeholder);
+        mNoVideoPlaceHolder = rootView.findViewById(R.id.no_video_placeholder);
 
-        if(mStep != null){
+        if (mStep != null) {
             mPlayerView = rootView.findViewById(R.id.playerView);
-        }
 
-        Uri u;
-        if(!TextUtils.isEmpty(mStep.getVideoURL())){
-
-            mNoVideoPlaceHolder.setVisibility(View.INVISIBLE);
-            u = Uri.parse(mStep.getVideoURL());
-            initializePlayer(u);
-
-        } else{
-            mNoVideoPlaceHolder.setVisibility(View.VISIBLE);
         }
 
         return rootView;
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (TextUtils.isEmpty(mStep.getVideoURL())) {
+            hidePlayerView();
+            return;
+        }
+
+        initializePlayer(Uri.parse(mStep.getVideoURL()));
+        showPlayerView();
+    }
+
+    private void showPlayerView() {
+        mNoVideoPlaceHolder.setVisibility(View.INVISIBLE);
+        mPlayerView.setVisibility(View.VISIBLE);
+    }
+
+    private void hidePlayerView() {
+        mNoVideoPlaceHolder.setVisibility(View.VISIBLE);
+        mPlayerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(PLAYER_CURRENT_POSITION, mPlayerCurrentPosition);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releasePlayer();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        releasePlayer();
     }
 }
