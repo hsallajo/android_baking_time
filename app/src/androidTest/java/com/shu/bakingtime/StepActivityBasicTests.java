@@ -17,6 +17,7 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -25,8 +26,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
-import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_NEXT_STEP;
-import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_PREV_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXT_IS_NEXT_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXT_IS_PREV_STEP;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
 
@@ -44,7 +45,7 @@ public class StepActivityBasicTests {
         mStepActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         if (mockStep().getVideoURL() != null) {
-            onView(allOf(withId(R.id.playerView), withClassName(is(SimpleExoPlayerView.class.getName())))).check(matches(isDisplayed()));
+            onData(allOf(withId(R.id.playerView), withClassName(is(SimpleExoPlayerView.class.getName())))).check(matches(isDisplayed()));
         }
     }
 
@@ -55,7 +56,7 @@ public class StepActivityBasicTests {
 
         mStepActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        onView(allOf(withId(R.id.tv_instruction)))
+        onData(withId(R.id.tv_instruction))
                 .check(matches(withText(mockStep().getDescription())));
 
     }
@@ -63,8 +64,8 @@ public class StepActivityBasicTests {
     private Intent initializeMockIntent(){
         Intent i = new Intent();
         i.putExtra(EXT_STEP_DATA, Parcels.wrap(mockStep()));
-        i.putExtra(EXTRA_IS_NEXT_STEP, true);
-        i.putExtra(EXTRA_IS_PREV_STEP, true);
+        i.putExtra(EXT_IS_NEXT_STEP, true);
+        i.putExtra(EXT_IS_PREV_STEP, true);
         return i;
     }
 

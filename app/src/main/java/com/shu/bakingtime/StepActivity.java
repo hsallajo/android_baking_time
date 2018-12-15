@@ -29,6 +29,7 @@ public class StepActivity extends AppCompatActivity {
 
     private static final String TAG = StepActivity.class.getSimpleName();
     public static final String CURRENT_STEP_DATA_BUNDLE = "CURRENT_STEP_DATA_BUNDLE";
+    public static final String FRAG_PLAYER_ONE_PANE = "player_fragment_one_pane_layout";
 
     private boolean mIsPreviousStep;
     private boolean mIsNextStep;
@@ -92,18 +93,28 @@ public class StepActivity extends AppCompatActivity {
             setupBottomNavigationButtons();
         }
 
-        createPlayerFragment();
+        setupPlayerFragment();
     }
 
-    private void createPlayerFragment() {
+    private void setupPlayerFragment() {
         Bundle arguments = new Bundle();
         arguments.putParcelable(EXT_STEP_DATA, getIntent().getParcelableExtra(EXT_STEP_DATA));
 
-        PlayerFragment playerFragment = new PlayerFragment();
-        playerFragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.step_player_fragment_container, playerFragment)
-                .commit();
+        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER_ONE_PANE);
+        if(playerFragment == null) {
+            playerFragment = new PlayerFragment();
+            playerFragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.step_player_fragment_container, playerFragment, FRAG_PLAYER_ONE_PANE)
+                    .commit();
+        } else {
+            playerFragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .detach(playerFragment)
+                    .attach(playerFragment)
+                    .commit();
+        }
+
     }
 
 

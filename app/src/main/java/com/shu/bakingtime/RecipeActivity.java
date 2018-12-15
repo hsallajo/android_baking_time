@@ -38,15 +38,15 @@ public class RecipeActivity extends AppCompatActivity {
     public static final String EXT_IS_PREV_STEP = "EXT_IS_PREV_STEP";
 
     public static final String CURRENT_RECIPE = "current_recipe";
-    public static final String CURRENT_STEP_INT = "current_step_int_number";
+    public static final String SELECTED_STEP_INT = "current_step_int_number";
     public static final String CURRENT_STEP_DATA = "current_step_data_wrapped_as_parcel";
 
     public static final String FRAG_INSTRUCTIONS = "fragment_instructions";
-    public static final String FRAG_PLAYER = "fragment_player";
+    public static final String FRAG_PLAYER_TWO_PANE = "fragment_player_two_pane";
 
     private boolean mTwoPane;
     private Recipe mRecipeData;
-    private int mCurrentStep;
+    private int mSelectedStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +58,12 @@ public class RecipeActivity extends AppCompatActivity {
         if (getIntent().hasExtra(EXT_RECIPE)) {
             Parcelable p = getIntent().getParcelableExtra(EXT_RECIPE);
             mRecipeData = Parcels.unwrap(p);
-
-            mCurrentStep = 0;
+            assert mRecipeData != null;
+            mSelectedStep = 0;
         }
 
         if(savedInstanceState != null){
-            mCurrentStep = savedInstanceState.getInt(CURRENT_STEP_INT);
+            mSelectedStep = savedInstanceState.getInt(SELECTED_STEP_INT);
             Parcelable p = savedInstanceState.getParcelable(CURRENT_RECIPE);
             mRecipeData = Parcels.unwrap(p);
         }
@@ -86,6 +86,8 @@ public class RecipeActivity extends AppCompatActivity {
         View recyclerView = findViewById(R.id.recipe_step_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
+
+        setupStepFragments(mRecipeData.getSteps().get(mSelectedStep));
     }
 
 
@@ -189,13 +191,13 @@ public class RecipeActivity extends AppCompatActivity {
                     .commit();
         }
 
-        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER);
+        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER_TWO_PANE);
         if (playerFragment == null) {
             playerFragment = new PlayerFragment();
             playerFragment.setArguments(arguments);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.player_fragment_container, playerFragment, FRAG_PLAYER)
+                    .add(R.id.player_fragment, playerFragment, FRAG_PLAYER_TWO_PANE)
                     .commit();
         }
     }
@@ -203,7 +205,7 @@ public class RecipeActivity extends AppCompatActivity {
     /*only two-pane mode*/
     private void updateStepFragments(Step data){
 
-        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER);
+        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER_TWO_PANE);
         assert playerFragment != null;
         playerFragment.updateStep(data);
 
@@ -229,33 +231,33 @@ public class RecipeActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(CURRENT_STEP_INT, mCurrentStep);
+        outState.putInt(SELECTED_STEP_INT, mSelectedStep);
         Parcelable p = Parcels.wrap(mRecipeData);
         outState.putParcelable(CURRENT_RECIPE, p);
     }
 
     private void previousStep() {
-        if (mCurrentStep - 1 < 0)
+        if (mSelectedStep - 1 < 0)
             return;
 
-        mCurrentStep -= 1;
-        setupStepActivity(mRecipeData.getSteps().get(mCurrentStep));
+        mSelectedStep -= 1;
+        setupStepActivity(mRecipeData.getSteps().get(mSelectedStep));
     }
 
     private void nextStep() {
-        if (mCurrentStep + 1 >= mRecipeData.getSteps().size())
+        if (mSelectedStep + 1 >= mRecipeData.getSteps().size())
             return;
 
-        mCurrentStep += 1;
-        setupStepActivity(mRecipeData.getSteps().get(mCurrentStep));
+        mSelectedStep += 1;
+        setupStepActivity(mRecipeData.getSteps().get(mSelectedStep));
     }
 
     private boolean isPreviousStep() {
-        return mCurrentStep > 0;
+        return mSelectedStep > 0;
     }
 
     private boolean isNextStep() {
-        return mCurrentStep < (mRecipeData.getSteps().size() - 1);
+        return mSelectedStep < (mRecipeData.getSteps().size() - 1);
     }
 
     class StepsRecyclerViewAdapter
@@ -270,7 +272,7 @@ public class RecipeActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Step stepData = (Step) view.getTag();
-                mCurrentStep = stepData.getId();
+                mSelectedStep = stepData.getId();
 
                 if (mTwoPane) {
 
@@ -289,10 +291,10 @@ public class RecipeActivity extends AppCompatActivity {
             mSteps = steps;
             mTwoPane = twoPane;
 
-            if (mTwoPane) {
-                Step stepData = mRecipeData.getSteps().get(mCurrentStep);
-                setupStepFragments(stepData);
-            }
+            /*if (mTwoPane) {
+                Step stepData = mRecipeData.getSteps().get(mSelectedStep);
+                //setupStepFragments(stepData);
+            }*/
 
         }
 
@@ -343,7 +345,7 @@ public class RecipeActivity extends AppCompatActivity {
                 itemViewHolder.itemView.setTag(mSteps.get(position - 1));
                 itemViewHolder.itemView.setOnClickListener(mOnClickListener);
 
-                if (mCurrentStep == (position - 1)) {
+                if (mSelectedStep == (position - 1)) {
                     itemViewHolder.itemView.setBackgroundColor(ResourcesCompat.getColor(getResources()
                             , android.R.color.holo_green_dark
                             , null));

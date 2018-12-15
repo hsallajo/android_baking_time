@@ -68,7 +68,7 @@ public class RecipeActivityScreenTest {
 
         if(isTablet(mRecipeActivity.getActivity())){
 
-            onView(withId(R.id.player_fragment_container)).check(matches(isDisplayed()));
+            onView(withId(R.id.player_fragment)).check(matches(isDisplayed()));
         }
     }
 
