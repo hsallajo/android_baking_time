@@ -45,7 +45,7 @@ public class StepActivityBasicTests {
         mStepActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         if (mockStep().getVideoURL() != null) {
-            onData(allOf(withId(R.id.playerView), withClassName(is(SimpleExoPlayerView.class.getName())))).check(matches(isDisplayed()));
+            onView(allOf(withId(R.id.playerView), withClassName(is(SimpleExoPlayerView.class.getName())))).check(matches(isDisplayed()));
         }
     }
 
@@ -56,7 +56,7 @@ public class StepActivityBasicTests {
 
         mStepActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        onData(withId(R.id.tv_instruction))
+        onView(withId(R.id.tv_instruction))
                 .check(matches(withText(mockStep().getDescription())));
 
     }
