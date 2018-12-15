@@ -63,6 +63,7 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState != null){
+            Log.d(TAG, "onCreate: savedInstanceState is NOT NULL");
             mSelectedStep = savedInstanceState.getInt(SELECTED_STEP_INT);
             Parcelable p = savedInstanceState.getParcelable(CURRENT_RECIPE);
             mRecipeData = Parcels.unwrap(p);
@@ -87,7 +88,13 @@ public class RecipeActivity extends AppCompatActivity {
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
 
-        setupStepFragments(mRecipeData.getSteps().get(mSelectedStep));
+        if (mTwoPane) {
+            setupStepFragments(mRecipeData.getSteps().get(mSelectedStep));
+        }
+
+        if(mTwoPane && savedInstanceState != null){
+            updateStepFragments(mRecipeData.getSteps().get(mSelectedStep));
+        }
     }
 
 

@@ -64,6 +64,9 @@ public class StepActivity extends AppCompatActivity {
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             Toolbar toolbar = findViewById(R.id.detail_toolbar);
+
+            if (mCurrentStepData != null)
+                toolbar.setTitle(mCurrentStepData.getShortDescription());
             setSupportActionBar(toolbar);
 
             // Show the Up button in the action bar.

@@ -79,8 +79,8 @@ public class PlayerFragment extends Fragment {
     public void updateStep(Step s){
         mStep = s;
 
-        initializePlayer(Uri.parse(s.getVideoURL()));
-        showPlayerView();
+        //initializePlayer(Uri.parse(s.getVideoURL()));
+        //showPlayerView();
     }
 
     private void initializePlayer(Uri uri) {
