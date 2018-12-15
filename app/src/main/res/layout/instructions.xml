@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/tv_instruction"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <TextView
+    android:id="@+id/tv_instructions_tablet"
     style="?android:attr/textAppearanceMedium"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="16dp"
     android:textIsSelectable="true"
     tools:context=".InstructionsFragment" />
+</FrameLayout>

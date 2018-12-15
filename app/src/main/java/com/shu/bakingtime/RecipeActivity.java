@@ -18,27 +18,31 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
-
 import com.shu.bakingtime.model.Ingredient;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.model.Step;
-
 import org.parceler.Parcels;
-
 import java.util.List;
-
-import static com.shu.bakingtime.RecipesMainActivity.EXTRA_RECIPE;
+import static com.shu.bakingtime.RecipesMainActivity.EXT_RECIPE;
 
 public class RecipeActivity extends AppCompatActivity {
 
     private static final String TAG = RecipeActivity.class.getSimpleName();
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_ITEM = 0;
-    public static final String EXT_STEP_DATA = "step_data";
-    public static final String EXTRA_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
     private static final int STEP_ACTIVITY_REQUEST_RESULT = 66;
-    public static final String EXTRA_IS_NEXT_STEP = "EXTRA_IS_NEXT_STEP";
-    public static final String EXTRA_IS_PREV_STEP = "EXTRA_IS_PREV_STEP";
+
+    public static final String EXT_STEP_DATA = "STEP_DATA";
+    public static final String EXT_NEXT_PREV_CLICK_EVENT = "NEXT_PREV_CLICK_EVENT";
+    public static final String EXT_IS_NEXT_STEP = "EXT_IS_NEXT_STEP";
+    public static final String EXT_IS_PREV_STEP = "EXT_IS_PREV_STEP";
+
+    public static final String CURRENT_RECIPE = "current_recipe";
+    public static final String CURRENT_STEP_INT = "current_step_int_number";
+    public static final String CURRENT_STEP_DATA = "current_step_data_wrapped_as_parcel";
+
+    public static final String FRAG_INSTRUCTIONS = "fragment_instructions";
+    public static final String FRAG_PLAYER = "fragment_player";
 
     private boolean mTwoPane;
     private Recipe mRecipeData;
@@ -51,20 +55,25 @@ public class RecipeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_recipe);
 
-        if (getIntent().hasExtra(EXTRA_RECIPE)) {
-            Parcelable p = getIntent().getParcelableExtra(EXTRA_RECIPE);
+        if (getIntent().hasExtra(EXT_RECIPE)) {
+            Parcelable p = getIntent().getParcelableExtra(EXT_RECIPE);
             mRecipeData = Parcels.unwrap(p);
-            Log.d(TAG, "onCreate: recipe data" + mRecipeData);
 
             mCurrentStep = 0;
         }
 
+        if(savedInstanceState != null){
+            mCurrentStep = savedInstanceState.getInt(CURRENT_STEP_INT);
+            Parcelable p = savedInstanceState.getParcelable(CURRENT_RECIPE);
+            mRecipeData = Parcels.unwrap(p);
+        }
+
         Toolbar toolbar = findViewById(R.id.toolbar);
-        if(mRecipeData != null)
+        if (mRecipeData != null)
             toolbar.setTitle(mRecipeData.getName());
+
         setSupportActionBar(toolbar);
 
-        // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -101,6 +110,7 @@ public class RecipeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         Log.d(TAG, "onDestroy: ");
     }
 
@@ -139,7 +149,7 @@ public class RecipeActivity extends AppCompatActivity {
         if (requestCode == STEP_ACTIVITY_REQUEST_RESULT) {
 
             if (resultCode == RESULT_OK) {
-                int click_event = data.getIntExtra(EXTRA_NEXT_PREV_CLICK_EVENT, 0);
+                int click_event = data.getIntExtra(EXT_NEXT_PREV_CLICK_EVENT, 0);
 
                 if (click_event == 2) {
                     previousStep();
@@ -155,31 +165,73 @@ public class RecipeActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, StepActivity.class);
         intent.putExtra(EXT_STEP_DATA, Parcels.wrap(data));
-        intent.putExtra(EXTRA_IS_NEXT_STEP, isNextStep());
-        intent.putExtra(EXTRA_IS_PREV_STEP, isPreviousStep());
+        intent.putExtra(EXT_IS_NEXT_STEP, isNextStep());
+        intent.putExtra(EXT_IS_PREV_STEP, isPreviousStep());
         startActivityForResult(intent, STEP_ACTIVITY_REQUEST_RESULT);
 
     }
 
+    /*only two-pane mode*/
     private void setupStepFragments(Step data) {
 
         Bundle arguments = new Bundle();
         arguments.putParcelable(EXT_STEP_DATA, Parcels.wrap(data));
-        arguments.putBoolean(EXTRA_IS_NEXT_STEP, isNextStep());
-        arguments.putBoolean(EXTRA_IS_PREV_STEP, isPreviousStep());
+        arguments.putBoolean(EXT_IS_NEXT_STEP, isNextStep());
+        arguments.putBoolean(EXT_IS_PREV_STEP, isPreviousStep());
 
-        InstructionsFragment fragment = new InstructionsFragment();
-        fragment.setArguments(arguments);
-        this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.instructions_fragment_container, fragment)
+        InstructionsFragment instructionsFragment = (InstructionsFragment) getSupportFragmentManager().findFragmentByTag(FRAG_INSTRUCTIONS);
+        if (instructionsFragment == null){
+            instructionsFragment = new InstructionsFragment();
+            instructionsFragment.setArguments(arguments);
+            this.getSupportFragmentManager().beginTransaction()
+                    .add(R.id.instructions_fragment_container, instructionsFragment, FRAG_INSTRUCTIONS)
+                    .addToBackStack(FRAG_INSTRUCTIONS)
+                    .commit();
+        }
+
+        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER);
+        if (playerFragment == null) {
+            playerFragment = new PlayerFragment();
+            playerFragment.setArguments(arguments);
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.player_fragment_container, playerFragment, FRAG_PLAYER)
+                    .commit();
+        }
+    }
+
+    /*only two-pane mode*/
+    private void updateStepFragments(Step data){
+
+        PlayerFragment playerFragment = (PlayerFragment) getSupportFragmentManager().findFragmentByTag(FRAG_PLAYER);
+        assert playerFragment != null;
+        playerFragment.updateStep(data);
+
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(EXT_STEP_DATA, Parcels.wrap(data));
+
+        InstructionsFragment f = new InstructionsFragment();
+        f.setArguments(arguments);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.instructions_fragment_container, f)
                 .commit();
 
-
-        PlayerFragment playerFragment = new PlayerFragment();
-        playerFragment.setArguments(arguments);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.player_fragment_container, playerFragment)
+        getSupportFragmentManager()
+                .beginTransaction()
+                .detach(playerFragment)
+                .attach(playerFragment)
                 .commit();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(CURRENT_STEP_INT, mCurrentStep);
+        Parcelable p = Parcels.wrap(mRecipeData);
+        outState.putParcelable(CURRENT_RECIPE, p);
     }
 
     private void previousStep() {
@@ -221,7 +273,8 @@ public class RecipeActivity extends AppCompatActivity {
                 mCurrentStep = stepData.getId();
 
                 if (mTwoPane) {
-                    setupStepFragments(stepData);
+
+                    updateStepFragments(stepData);
                     // bg color for visible (step) items need to be refreshed.
                     notifyItemRangeChanged(1, getItemCount());
 
@@ -236,7 +289,6 @@ public class RecipeActivity extends AppCompatActivity {
             mSteps = steps;
             mTwoPane = twoPane;
 
-            mCurrentStep = 0;
             if (mTwoPane) {
                 Step stepData = mRecipeData.getSteps().get(mCurrentStep);
                 setupStepFragments(stepData);
@@ -259,20 +311,19 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
             super.onAttachedToRecyclerView(recyclerView);
             this.mRecyclerView = recyclerView;
         }
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            /* TYPE_ITEM */
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
             if (viewType == TYPE_ITEM) {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recipe_item, parent, false);
                 return new ItemViewHolder(view);
             }
-            /* TYPE_HEADER */
             else {
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.recipe_item_header, parent, false);
@@ -281,7 +332,7 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
 
             if ((holder.getItemViewType() == TYPE_ITEM)
                     && position != 0) {
@@ -303,7 +354,6 @@ public class RecipeActivity extends AppCompatActivity {
                 }
             }
         }
-
 
         class HeaderViewHolder extends RecyclerView.ViewHolder {
 
@@ -327,11 +377,9 @@ public class RecipeActivity extends AppCompatActivity {
                                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
                         rowHeight = v.getMeasuredHeight();
                         listHeight = listHeight + rowHeight;
-                        //Log.d(TAG, "HeaderViewHolder: rowHeight is " + rowHeight);
                     }
                 }
                 listHeight = listHeight + mIngredientView.getDividerHeight() * mIngredients.size();
-                //Log.d(TAG, "HeaderViewHolder: total height is " + listHeight);
 
                 ViewGroup.LayoutParams p = mIngredientView.getLayoutParams();
                 p.height = listHeight;
@@ -395,7 +443,7 @@ public class RecipeActivity extends AppCompatActivity {
             final TextView mStepId;
             final TextView mStepBrief;
 
-            public void bind(int position) {
+            void bind(int position) {
                 mStepId.setText(Integer.toString(mSteps.get(position - 1).getId()));
                 mStepBrief.setText(mSteps.get(position - 1).getShortDescription());
             }
@@ -403,7 +451,7 @@ public class RecipeActivity extends AppCompatActivity {
             private ItemViewHolder(View view) {
                 super(view);
                 mStepId = view.findViewById(R.id.tv_step_number);
-                mStepBrief = (TextView) view.findViewById(R.id.tv_step_brief);
+                mStepBrief = view.findViewById(R.id.tv_step_brief);
             }
         }
     }

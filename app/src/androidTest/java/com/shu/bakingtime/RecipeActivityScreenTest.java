@@ -22,7 +22,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDis
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.shu.bakingtime.RecipesMainActivity.EXTRA_RECIPE;
+import static com.shu.bakingtime.RecipesMainActivity.EXT_RECIPE;
 import static org.hamcrest.CoreMatchers.anything;
 
 @RunWith(AndroidJUnit4.class)
@@ -51,7 +51,7 @@ public class RecipeActivityScreenTest {
     public void launchRecipeActivityWithIntent(){
 
         Intent i = new Intent();
-        i.putExtra(EXTRA_RECIPE, Parcels.wrap(mockRecipe()));
+        i.putExtra(EXT_RECIPE, Parcels.wrap(mockRecipe()));
         mRecipeActivity.launchActivity(i);
 
         mRecipeActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -62,7 +62,7 @@ public class RecipeActivityScreenTest {
     public void launchRecipeActivityInTablet_launchesTwoPaneLayoutWithPlayer(){
 
         Intent i = new Intent();
-        i.putExtra(EXTRA_RECIPE, Parcels.wrap(mockRecipe()));
+        i.putExtra(EXT_RECIPE, Parcels.wrap(mockRecipe()));
         mRecipeActivity.launchActivity(i);
         mRecipeActivity.getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 

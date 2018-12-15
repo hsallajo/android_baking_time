@@ -77,11 +77,15 @@
                 app:layout_constraintBottom_toTopOf="@id/step_bottom_row"
                 android:background="@android:color/white">
 
-                <FrameLayout
-                    android:id="@+id/instructions_fragment_container"
+                <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/tv_instruction"
+                    style="?android:attr/textAppearanceMedium"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </FrameLayout>
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:textIsSelectable="true"
+                    tools:context=".StepActivity" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout

@@ -35,11 +35,15 @@ import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
 public class PlayerFragment extends Fragment {
 
     public static final String PLAYER_CURRENT_POSITION = "PLAYER_CURRENT_POSITION";
+    public static final String TAG = PlayerFragment.class.getSimpleName();
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
     private ImageView mNoVideoPlaceHolder;
     private long mPlayerCurrentPosition;
+
+    private String mUserAgent;
+    TrackSelector mTrackSelector;
 
     public PlayerFragment() {
     }
@@ -58,42 +62,6 @@ public class PlayerFragment extends Fragment {
             mPlayerCurrentPosition = C.TIME_UNSET;
     }
 
-    private void initializePlayer(Uri uri) {
-
-        if (mExoPlayer == null) {
-
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-
-            mPlayerView.setPlayer(mExoPlayer);
-            String userAgent = Util.getUserAgent(getContext(), "BakingTime");
-            MediaSource source = new ExtractorMediaSource(uri, new DefaultDataSourceFactory(getContext(), userAgent)
-                    , new DefaultExtractorsFactory(), null, null);
-
-            mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-            mExoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-
-            if (mPlayerCurrentPosition != C.TIME_UNSET) {
-                Log.d("exo", "initializePlayer: current position " + mPlayerCurrentPosition );
-                mExoPlayer.seekTo(mPlayerCurrentPosition);
-            }
-            mExoPlayer.prepare(source);
-            mExoPlayer.setPlayWhenReady(true);
-        }
-    }
-
-    private void releasePlayer() {
-        if (mExoPlayer != null) {
-            mPlayerCurrentPosition = mExoPlayer.getCurrentPosition();
-            Log.d("exo", "releasing, position now: " + mPlayerCurrentPosition);
-
-            mExoPlayer.stop();
-            mExoPlayer.release();
-            mExoPlayer = null;
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -103,15 +71,58 @@ public class PlayerFragment extends Fragment {
 
         if (mStep != null) {
             mPlayerView = rootView.findViewById(R.id.playerView);
-
         }
 
         return rootView;
     }
 
+    public void updateStep(Step s){
+        mStep = s;
+
+        initializePlayer(Uri.parse(s.getVideoURL()));
+        showPlayerView();
+    }
+
+    private void initializePlayer(Uri uri) {
+
+        if (mExoPlayer == null) {
+
+            mTrackSelector = new DefaultTrackSelector();
+            LoadControl loadControl = new DefaultLoadControl();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), mTrackSelector, loadControl);
+
+            mPlayerView.setPlayer(mExoPlayer);
+            mUserAgent = Util.getUserAgent(getContext(), "BakingTime");
+        }
+
+        MediaSource source = new ExtractorMediaSource(uri, new DefaultDataSourceFactory(getContext(), mUserAgent)
+                , new DefaultExtractorsFactory(), null, null);
+
+        mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        mExoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+
+        if (mPlayerCurrentPosition != C.TIME_UNSET) {
+            mExoPlayer.seekTo(mPlayerCurrentPosition);
+        }
+        mExoPlayer.prepare(source);
+        mExoPlayer.setPlayWhenReady(true);
+    }
+
+    private void releasePlayer() {
+        if (mExoPlayer != null) {
+            mPlayerCurrentPosition = mExoPlayer.getCurrentPosition();
+
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: " + mStep.getId());
         if (TextUtils.isEmpty(mStep.getVideoURL())) {
             hidePlayerView();
             return;
@@ -138,13 +149,27 @@ public class PlayerFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: " + mStep.getId());
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause: " + mStep.getId());
         releasePlayer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: " + mStep.getId());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy: " + mStep.getId());
     }
 }

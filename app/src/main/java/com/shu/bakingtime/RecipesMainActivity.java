@@ -2,6 +2,7 @@ package com.shu.bakingtime;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import com.shu.bakingtime.model.Recipe;
 import com.shu.bakingtime.sync.RecipeSyncService;
 import com.shu.bakingtime.utilities.UIUtils;
-import com.shu.bakingtime.utilities.jsonUtil;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -34,7 +34,7 @@ import java.util.List;
 public class RecipesMainActivity extends AppCompatActivity {
 
     private static final String TAG = RecipesMainActivity.class.getSimpleName();
-    public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
+    public static final String EXT_RECIPE = "EXT_RECIPE";
     public static final String KEY_BAKING_TIME_RECIPES_CNT = "key_baking_time_recipes_cnt";
     public final static String KEY_BAKING_TIME_LAST_RECIPE_ID = "key_baking_time_last_recipe_id";
     public final static String SHARED_PREF_BAKING_TIME = "shared_pref_baking_time";
@@ -116,7 +116,7 @@ public class RecipesMainActivity extends AppCompatActivity {
 
     private void updateLastRecipe(int position) {
 
-        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREF_BAKING_TIME, this.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREF_BAKING_TIME, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         edit.putInt(KEY_BAKING_TIME_LAST_RECIPE_ID, position);
         edit.putInt(KEY_BAKING_TIME_RECIPES_CNT, mRecipesAdapter.getItemCount());
@@ -128,7 +128,7 @@ public class RecipesMainActivity extends AppCompatActivity {
 
     private void createStepsActivity(int position) {
         Intent i = new Intent(this, RecipeActivity.class);
-        i.putExtra(EXTRA_RECIPE, Parcels.wrap(mRecipesAdapter.mData.get(position)));
+        i.putExtra(EXT_RECIPE, Parcels.wrap(mRecipesAdapter.mData.get(position)));
         startActivity(i);
     }
 
@@ -207,7 +207,7 @@ public class RecipesMainActivity extends AppCompatActivity {
                 super(view);
                 mAdditionalInfoView = view.findViewById(R.id.tv_recipe_servings);
                 mContentView = view.findViewById(R.id.tv_recipe_name);
-                mImage = (ImageView) view.findViewById(R.id.recipe_image);
+                mImage = view.findViewById(R.id.recipe_image);
 
                 view.setOnClickListener(this);
             }

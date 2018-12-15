@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,85 +13,106 @@ import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.shu.bakingtime.model.Step;
+
+import org.parceler.Parcels;
+
+import static com.shu.bakingtime.RecipeActivity.CURRENT_STEP_DATA;
 import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
-import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_NEXT_STEP;
-import static com.shu.bakingtime.RecipeActivity.EXTRA_IS_PREV_STEP;
-import static com.shu.bakingtime.RecipeActivity.EXTRA_NEXT_PREV_CLICK_EVENT;
+import static com.shu.bakingtime.RecipeActivity.EXT_IS_NEXT_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXT_IS_PREV_STEP;
+import static com.shu.bakingtime.RecipeActivity.EXT_NEXT_PREV_CLICK_EVENT;
 
 public class StepActivity extends AppCompatActivity {
 
     private static final String TAG = StepActivity.class.getSimpleName();
+    public static final String CURRENT_STEP_DATA_BUNDLE = "CURRENT_STEP_DATA_BUNDLE";
 
     private boolean mIsPreviousStep;
     private boolean mIsNextStep;
+    private Step mCurrentStepData;
+
+    int orientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
 
+        orientation = getResources().getConfiguration().orientation;
         setContentView(R.layout.activity_step);
 
         mIsPreviousStep = false;
         mIsNextStep = false;
 
-        if(getIntent().getExtras() != null){
-            if(getIntent().getExtras().containsKey(EXTRA_IS_NEXT_STEP))
-                mIsNextStep = getIntent().getExtras().getBoolean(EXTRA_IS_NEXT_STEP);
-            if(getIntent().getExtras().containsKey(EXTRA_IS_PREV_STEP)) {
-                mIsPreviousStep = getIntent().getExtras().getBoolean(EXTRA_IS_PREV_STEP);
-                Log.d(TAG, "onCreate: mIsPreviousStep is: " + mIsPreviousStep);
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (getIntent().getExtras() != null) {
+                if (getIntent().getExtras().containsKey(EXT_IS_NEXT_STEP))
+                    mIsNextStep = getIntent().getExtras().getBoolean(EXT_IS_NEXT_STEP);
+                if (getIntent().getExtras().containsKey(EXT_IS_PREV_STEP)) {
+                    mIsPreviousStep = getIntent().getExtras().getBoolean(EXT_IS_PREV_STEP);
+                }
+            }
+        }
+        if (getIntent().getExtras().containsKey(EXT_STEP_DATA)) {
+            Parcelable p = getIntent().getExtras().getParcelable(EXT_STEP_DATA);
+            mCurrentStepData = Parcels.unwrap(p);
+        }
+
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Toolbar toolbar = findViewById(R.id.detail_toolbar);
+            setSupportActionBar(toolbar);
+
+            // Show the Up button in the action bar.
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
 
-        Toolbar toolbar = findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
-
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
         View v = getWindow().getDecorView();
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             v.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         } else {
             v.setSystemUiVisibility(0);
         }
 
-        if (savedInstanceState == null) {
-
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(EXT_STEP_DATA,
-                    getIntent().getParcelableExtra(EXT_STEP_DATA));
-
-            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-                InstructionsFragment fragment = new InstructionsFragment();
-                fragment.setArguments(arguments);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.instructions_fragment_container, fragment)
-                        .commit();
-
-                setupBottomNavigationButtons();
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(CURRENT_STEP_DATA)) {
+                Parcelable p = savedInstanceState.getParcelable(CURRENT_STEP_DATA);
+                mCurrentStepData = Parcels.unwrap(p);
             }
-
-            PlayerFragment playerFragment = new PlayerFragment();
-            playerFragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.step_player_fragment_container, playerFragment)
-                    .commit();
         }
 
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            TextView tv_instructions_hh = findViewById(R.id.tv_instruction);
+            tv_instructions_hh.setText(mCurrentStepData.getDescription());
+            setupBottomNavigationButtons();
+        }
+
+        createPlayerFragment();
     }
+
+    private void createPlayerFragment() {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(EXT_STEP_DATA, getIntent().getParcelableExtra(EXT_STEP_DATA));
+
+        PlayerFragment playerFragment = new PlayerFragment();
+        playerFragment.setArguments(arguments);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.step_player_fragment_container, playerFragment)
+                .commit();
+    }
+
 
     private void setupBottomNavigationButtons() {
         Button prev = findViewById(R.id.step_btn_prev);
         Drawable drawablePrev = getResources().getDrawable(R.drawable.ic_chevron_left_black_24dp);
         drawablePrev = DrawableCompat.wrap(drawablePrev);
 
-        if(!mIsPreviousStep){
+        if (!mIsPreviousStep) {
             DrawableCompat.setTint(drawablePrev, getResources().getColor(R.color.grey_light));
             prev.setAlpha(.5f);
         } else {
@@ -104,7 +126,7 @@ public class StepActivity extends AppCompatActivity {
         Drawable drawableNext = getResources().getDrawable(R.drawable.ic_chevron_right_black_24dp);
         drawableNext = DrawableCompat.wrap(drawableNext);
 
-        if(!mIsNextStep){
+        if (!mIsNextStep) {
             DrawableCompat.setTint(drawableNext, getResources().getColor(R.color.grey_light));
             next.setAlpha(.5f);
         } else {
@@ -152,6 +174,17 @@ public class StepActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mCurrentStepData != null) {
+            Parcelable p = Parcels.wrap(mCurrentStepData);
+            Log.d(TAG, "onSaveInstanceState: p " + p);
+            outState.putParcelable(CURRENT_STEP_DATA_BUNDLE, p);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
@@ -164,7 +197,7 @@ public class StepActivity extends AppCompatActivity {
 
     public void onNextButtonClick(View view) {
         Intent i = new Intent();
-        i.putExtra(EXTRA_NEXT_PREV_CLICK_EVENT, 3);
+        i.putExtra(EXT_NEXT_PREV_CLICK_EVENT, 3);
         setResult(RESULT_OK, i);
         finish();
     }
@@ -172,7 +205,7 @@ public class StepActivity extends AppCompatActivity {
     public void onPrevButtonClick(View view) {
         Intent i = new Intent();
         Log.d(TAG, "onPrevButtonClick: ");
-        i.putExtra(EXTRA_NEXT_PREV_CLICK_EVENT, 2);
+        i.putExtra(EXT_NEXT_PREV_CLICK_EVENT, 2);
         setResult(RESULT_OK, i);
         finish();
     }
