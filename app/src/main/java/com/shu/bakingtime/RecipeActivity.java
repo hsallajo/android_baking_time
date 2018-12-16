@@ -9,7 +9,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +50,6 @@ public class RecipeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
 
         setContentView(R.layout.activity_recipe);
 
@@ -63,7 +61,6 @@ public class RecipeActivity extends AppCompatActivity {
         }
 
         if(savedInstanceState != null){
-            Log.d(TAG, "onCreate: savedInstanceState is NOT NULL");
             mSelectedStep = savedInstanceState.getInt(SELECTED_STEP_INT);
             Parcelable p = savedInstanceState.getParcelable(CURRENT_RECIPE);
             mRecipeData = Parcels.unwrap(p);
@@ -113,45 +110,9 @@ public class RecipeActivity extends AppCompatActivity {
                 , mTwoPane);
         recyclerView.setAdapter(mAdapter);
 
-        //recyclerView.setHasFixedSize(true);
+        recyclerView.setHasFixedSize(true);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        Log.d(TAG, "onDestroy: ");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart: ");
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
