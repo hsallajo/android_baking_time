@@ -14,11 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.shu.bakingtime.model.Step;
-
 import org.parceler.Parcels;
-
 import static com.shu.bakingtime.RecipeActivity.CURRENT_STEP_DATA;
 import static com.shu.bakingtime.RecipeActivity.EXT_STEP_DATA;
 import static com.shu.bakingtime.RecipeActivity.EXT_IS_NEXT_STEP;
@@ -28,7 +25,6 @@ import static com.shu.bakingtime.RecipeActivity.EXT_NEXT_PREV_CLICK_EVENT;
 public class StepActivity extends AppCompatActivity {
 
     private static final String TAG = StepActivity.class.getSimpleName();
-    public static final String CURRENT_STEP_DATA_BUNDLE = "CURRENT_STEP_DATA_BUNDLE";
     public static final String FRAG_PLAYER_ONE_PANE = "player_fragment_one_pane_layout";
 
     private boolean mIsPreviousStep;
@@ -40,7 +36,6 @@ public class StepActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
 
         orientation = getResources().getConfiguration().orientation;
         setContentView(R.layout.activity_step);
@@ -49,7 +44,7 @@ public class StepActivity extends AppCompatActivity {
         mIsNextStep = false;
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if (getIntent().getExtras() != null) {
+            if (getIntent() != null && getIntent().getExtras() != null) {
                 if (getIntent().getExtras().containsKey(EXT_IS_NEXT_STEP))
                     mIsNextStep = getIntent().getExtras().getBoolean(EXT_IS_NEXT_STEP);
                 if (getIntent().getExtras().containsKey(EXT_IS_PREV_STEP)) {
@@ -62,6 +57,11 @@ public class StepActivity extends AppCompatActivity {
             mCurrentStepData = Parcels.unwrap(p);
         }
 
+        if(savedInstanceState != null
+                && savedInstanceState.containsKey(CURRENT_STEP_DATA)){
+            mCurrentStepData = Parcels.unwrap(savedInstanceState.getParcelable(CURRENT_STEP_DATA));
+        }
+
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             Toolbar toolbar = findViewById(R.id.detail_toolbar);
 
@@ -69,7 +69,6 @@ public class StepActivity extends AppCompatActivity {
                 toolbar.setTitle(mCurrentStepData.getShortDescription());
             setSupportActionBar(toolbar);
 
-            // Show the Up button in the action bar.
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
@@ -83,12 +82,6 @@ public class StepActivity extends AppCompatActivity {
             v.setSystemUiVisibility(0);
         }
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(CURRENT_STEP_DATA)) {
-                Parcelable p = savedInstanceState.getParcelable(CURRENT_STEP_DATA);
-                mCurrentStepData = Parcels.unwrap(p);
-            }
-        }
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             TextView tv_instructions_hh = findViewById(R.id.tv_instruction);
@@ -152,49 +145,11 @@ public class StepActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart: ");
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         if (mCurrentStepData != null) {
-            Parcelable p = Parcels.wrap(mCurrentStepData);
-            Log.d(TAG, "onSaveInstanceState: p " + p);
-            outState.putParcelable(CURRENT_STEP_DATA_BUNDLE, p);
+            outState.putParcelable(CURRENT_STEP_DATA, Parcels.wrap(mCurrentStepData));
         }
     }
 
@@ -202,7 +157,6 @@ public class StepActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            //navigateUpTo(new Intent(this, RecipeActivity.class));
             finish();
             return true;
         }
@@ -218,7 +172,6 @@ public class StepActivity extends AppCompatActivity {
 
     public void onPrevButtonClick(View view) {
         Intent i = new Intent();
-        Log.d(TAG, "onPrevButtonClick: ");
         i.putExtra(EXT_NEXT_PREV_CLICK_EVENT, 2);
         setResult(RESULT_OK, i);
         finish();

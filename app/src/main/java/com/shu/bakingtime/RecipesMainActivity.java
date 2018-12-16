@@ -45,7 +45,6 @@ public class RecipesMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
 
         setContentView(R.layout.activity_recipes_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -63,49 +62,13 @@ public class RecipesMainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
                 if (recipes == null || recipes.size() == 0) {
-                    Log.i(TAG, "no recipes found. Starting db sync.");
+                    Log.i(TAG, "no recipes in database. Starting db sync.");
                     mModel.loadRecipes();
                 } else
                     mRecipesAdapter.refreshData(recipes);
             }
         });
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "onRestart: ");
     }
 
     private void onRecipesAdapterViewHolderClick(int position) {
@@ -140,9 +103,6 @@ public class RecipesMainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {

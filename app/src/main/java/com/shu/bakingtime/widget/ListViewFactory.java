@@ -13,7 +13,7 @@ import static com.shu.bakingtime.widget.BakingTimeWidget.KEY_BAKING_LAST_RECIPE_
 public class ListViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
     public static final String TAG = ListViewFactory.class.getSimpleName();
-    private Context context;
+    private final Context context;
     private List<Ingredient> mIngredients;
 
     public ListViewFactory(Context applicationContext, Intent intent) {
