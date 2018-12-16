@@ -15,7 +15,6 @@ public class BakingTimeSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Log.d(TAG, "onHandleIntent: intent started");
         BakingTimeSyncTask.syncRecipes(this);
     }
 }

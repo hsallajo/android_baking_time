@@ -47,7 +47,7 @@ public class BakingTimeSyncTask {
                     }
 
                 } else{
-                    Log.i(TAG, "BakingTime recipe loading did not succeed, response code: " + response.code());
+                    Log.i(TAG, "BakingTime loading failed, response code: " + response.code());
                 }
             }
 

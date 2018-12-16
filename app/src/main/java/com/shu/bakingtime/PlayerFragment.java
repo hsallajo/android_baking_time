@@ -149,7 +149,7 @@ public class PlayerFragment extends Fragment implements ExoPlayer.EventListener{
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(c, mTrackSelector, loadControl);
 
             mPlayerView.setPlayer(mExoPlayer);
-            mUserAgent = Util.getUserAgent(c, "BakingTime");
+            mUserAgent = Util.getUserAgent(c, getResources().getString(R.string.app_name));
 
             mExoPlayer.addListener(this);
         }
