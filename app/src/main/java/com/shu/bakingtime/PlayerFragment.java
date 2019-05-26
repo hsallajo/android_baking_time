@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -163,6 +164,10 @@ public class PlayerFragment extends Fragment implements ExoPlayer.EventListener{
         if (mPlayerCurrentPosition != C.TIME_UNSET) {
             mExoPlayer.seekTo(mPlayerCurrentWindowsIndex, mPlayerCurrentPosition);
         }
+
+        //mPlayerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
+        //mExoPlayer.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+
         mExoPlayer.prepare(source, false, false);
         mExoPlayer.setPlayWhenReady(mPlayWhenReady);
     }

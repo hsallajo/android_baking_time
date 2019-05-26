@@ -1,7 +1,6 @@
 package com.shu.bakingtime;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,17 +14,19 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 @RunWith(AndroidJUnit4.class)
-public class ReceipesMainActivityBasicTest {
+public class RecipesMainActivityBasicTest {
 
     @Rule
     public ActivityTestRule<RecipesMainActivity> mActivity
             = new ActivityTestRule<>(RecipesMainActivity.class);
 
+
     @Test
     public void clickOnRecipeCard_OpensNewActivity(){
         onView(withText("Yellow Cake"))
                 .perform(click());
-        onView(withText("Recipe Introduction"))
+        onView(
+                withText("Starting prep"))
                 .check(matches(isDisplayed()));
     }
 
