@@ -27,13 +27,6 @@ Picasso Parceler Retrofit ExoPlayer TextDrawable
 
 <img src="images/screenshot-13.13.51.631.png" width="150">
 
-![](images/screenshot-14.23.50.444.png)
-
-![](images/screenshot-13.13.26.451.png)
-
-![](images/screenshot-13.13.51.631.png)
-
-
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may
